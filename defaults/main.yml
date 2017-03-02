@@ -3,7 +3,7 @@
 gitlab_config_dest: /etc/gitlab
 
 # Required
-# gitlab_config_external_url: https://example.com
+gitlab_config_external_url: http://example.com
 
 # Optional - Following are NOT default values, are only examples
 
