@@ -1,0 +1,19 @@
+---
+- name: create host pki dir
+  become: yes
+  become_user: root
+  file:
+    state: directory
+    path: '{{gitlab_config_dest_pki_dir}}'
+    mode: 0700
+
+- name: install keys/certs
+  become: yes
+  become_user: root
+  with_items:
+    - { f: '{{gitlab_config_pki_key_src}}', d: '{{gitlab_config_pki_key_dest}}', m: '0400' }
+    - { f: '{{gitlab_config_pki_cert_src}}', d: '{{gitlab_config_pki_cert_dest}}', m: '0400'}
+  copy:
+    src: '{{item.f}}'
+    dest: '{{item.d}}'
+    mode: '{{item.m}}'

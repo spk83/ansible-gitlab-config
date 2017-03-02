@@ -1,8 +1,18 @@
 ---
+- include: pki.yml
+  when: gitlab_config_enable_https|default(false)
+
 - name: load gitlab-config file
   become: yes
   become_user: root
+  register: load_config
   template:
     src: gitlab.rb.j2
     dest: '{{gitlab_config_dest}}/gitlab.rb'
     mode: 0600
+
+- name: reconfigure gitlab
+  become: yes
+  become_user: root
+  when: gitlab_config_reconfigure|default(true) and load_config|changed
+  command: gitlab-ctl reconfigure

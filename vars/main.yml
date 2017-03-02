@@ -1,0 +1,8 @@
+---
+gitlab_config_pki_key_file : '{{inventory_hostname}}{{gitlab_config_pki_key_suffix | default(".key")}}'
+gitlab_config_pki_key_src: '{{gitlab_config_src_pki_dir | default("~/pki")}}/{{gitlab_config_pki_key_file}}'
+gitlab_config_pki_key_dest : '{{gitlab_config_dest_pki_dir | default("/etc/gitlab/ssl")}}/{{gitlab_config_pki_key_file}}'
+
+gitlab_config_pki_cert_file : '{{inventory_hostname}}{{gitlab_config_pki_cert_suffix | default(".crt")}}'
+gitlab_config_pki_cert_src: '{{gitlab_config_src_pki_dir | default("~/pki")}}/{{gitlab_config_pki_cert_file}}'
+gitlab_config_pki_cert_dest : '{{gitlab_config_dest_pki_dir | default("/etc/gitlab/ssl")}}/{{gitlab_config_pki_cert_file}}'

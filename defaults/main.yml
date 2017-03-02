@@ -2,6 +2,9 @@
 
 gitlab_config_dest: /etc/gitlab
 
+# Run gitlab-ctl reconfigure if config has changed
+gitlab_config_reconfigure: true
+
 # Required
 gitlab_config_external_url: http://example.com
 
@@ -55,9 +58,12 @@ gitlab_config_external_url: http://example.com
 # gitlab_config_prometheus_node_exporter_enable: true
 
 # To enable HTTPS, change the gitlab_config_external_url to https://example.com
+# gitlab_config_enable_https: true
+# gitlab_config_src_pki_dir: ~/pki
+# gitlab_config_dest_pki_dir: /etc/gitlab/ssl
+# gitlab_config_pki_key_suffix: '.key'
+# gitlab_config_pki_cert_suffix: '.crt'
 # gitlab_config_nginx_redirect_to_https: true
-# gitlab_config_nginx_ssl_certificate: /etc/gitlab/ssl/gitlab.example.crt
-# gitlab_config_nginx_ssl_certificate_key: /etc/gitlab/ssl/gitlab.example.com.key
 #
 # For all other settings listed on - https://gitlab.com/gitlab-org/omnibus-gitlab/blob/master/files/gitlab-config-template/gitlab.rb.template ,
 # use following map to add custom settings

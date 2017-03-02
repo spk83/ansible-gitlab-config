@@ -105,22 +105,13 @@ node_exporter['enable'] = true
 {% endif %}
 {% endif %}
 
-{% if gitlab_config_nginx_redirect_to_https is defined and gitlab_config_nginx_redirect_to_https %}
+{% if gitlab_config_enable_https is defined and gitlab_config_enable_https %}
 ##! Docs: https://docs.gitlab.com/omnibus/settings/nginx.html
+nginx['ssl_certificate'] = "{{gitlab_config_pki_cert_dest}}"
+nginx['ssl_certificate_key'] = "{{gitlab_config_pki_key_dest}}"
+{% if gitlab_config_nginx_redirect_to_https is defined and gitlab_config_nginx_redirect_to_https %}
 nginx['redirect_http_to_https'] = true
 {% endif %}
-
-{% if gitlab_config_nginx_redirect_to_https is defined and gitlab_config_nginx_redirect_to_https %}
-##! Docs: https://docs.gitlab.com/omnibus/settings/nginx.html
-nginx['redirect_http_to_https'] = true
-{% endif %}
-
-{% if gitlab_config_nginx_ssl_certificate is defined %}
-nginx['ssl_certificate'] = "{{gitlab_config_nginx_ssl_certificate}}"
-{% endif %}
-
-{% if gitlab_config_nginx_ssl_certificate_key is defined %}
-nginx['ssl_certificate_key'] = "{{gitlab_config_nginx_ssl_certificate_key}}"
 {% endif %}
 
 {% if gitlab_config_custom is defined %}
