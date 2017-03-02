@@ -1,0 +1,8 @@
+---
+- name: load gitlab-config file
+  become: yes
+  become_user: root
+  template:
+    src: gitlab.rb.j2
+    dest: '{{gitlab_config_dest}}/gitlab.rb'
+    mode: 0600

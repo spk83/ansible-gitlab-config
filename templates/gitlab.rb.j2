@@ -1,0 +1,128 @@
+## Latest options listed at https://gitlab.com/gitlab-org/omnibus-gitlab/blob/master/files/gitlab-config-template/gitlab.rb.template
+
+## GitLab URL
+##! URL on which GitLab will be reachable.
+##! For more details on configuring external_url see:
+##! https://docs.gitlab.com/omnibus/settings/configuration.html#configuring-the-external-url-for-gitlab
+external_url "{{gitlab_config_external_url}}"
+
+{% if gitlab_config_timezone is defined %}
+gitlab_rails['timezone'] = "{{gitlab_config_timezone}}"
+{% endif %}
+
+{% if gitlab_config_email_from is defined %}
+gitlab_rails['gitlab_email_from'] = "{{gitlab_config_email_from}}"
+{% endif %}
+
+{% if gitlab_config_email_reply_to is defined %}
+gitlab_rails['gitlab_email_reply_to'] = "{{gitlab_config_email_reply_to}}"
+{% endif %}
+
+{% if gitlab_config_ldap_enabled is defined and gitlab_config_ldap_enabled %}
+### LDAP Settings
+###! Docs: https://docs.gitlab.com/omnibus/settings/ldap.html
+###! **Be careful not to break the indentation in the ldap_servers block. It is
+###!   in yaml format and the spaces must be retained. Using tabs will not work.**
+
+gitlab_rails['ldap_enabled'] = true
+
+###! **remember to close this block with 'EOS' below**
+gitlab_rails['ldap_servers'] = YAML.load <<-'EOS' # remember to close this block with 'EOS' below
+  main: # 'main' is the GitLab 'provider ID' of this LDAP server
+    label: '{{gitlab_config_ldap_label}}'
+    host: '{{gitlab_config_ldap_host}}'
+    port: {{gitlab_config_ldap_port}}
+    uid: '{{gitlab_config_ldap_uid}}'
+    method: '{{gitlab_config_ldap_method}}' # "tls" or "ssl" or "plain"
+    bind_dn: '{{gitlab_config_ldap_bind_dn}}'
+    password: '{{gitlab_config_ldap_password}}'
+    active_directory: {{gitlab_config_ldap_active_directory | to_json}}
+    allow_username_or_email_login: {{gitlab_config_allow_username_or_email_login | to_json}}
+    block_auto_created_users: {{gitlab_config_ldap_block_auto_created_users | to_json}}
+    base: '{{gitlab_config_ldap_base}}'
+    user_filter: '{{gitlab_config_ldap_use_filter}}'
+EOS
+{% endif %}
+
+{% if gitlab_config_manage_backup_path is defined and gitlab_config_manage_backup_path %}
+### Backup Settings
+###! Docs: https://docs.gitlab.com/omnibus/settings/backups.html
+gitlab_rails['manage_backup_path'] = true
+gitlab_rails['backup_path'] = "{{gitlab_config_backup_path}}"
+{% endif %}
+
+{% if gitlab_config_backup_archive_permissions is defined %}
+###! Docs: https://docs.gitlab.com/ce/raketasks/backup_restore.html#backup-archive-permissions
+gitlab_rails['backup_archive_permissions'] = {{gitlab_config_backup_archive_permissions}}
+{% endif %}
+
+{% if gitlab_config_backup_keep_time is defined %}
+gitlab_rails['backup_keep_time'] = {{gitlab_config_backup_keep_time}}
+{% endif %}
+
+{% if gitlab_config_backup_upload_nfs is defined and gitlab_config_backup_upload_nfs %}
+gitlab_rails['backup_upload_connection'] = {
+  :provider => '{{gitlab_config_backup_upload_connection_provider}}',
+  :local_root => '{{gitlab_config_backup_upload_connection_local_root}}'
+}
+gitlab_rails['backup_upload_remote_directory'] = "{{gitlab_config_backup_upload_remote_directory}}"
+{% endif %}
+
+{% if gitlab_config_smtp_enabled is defined and gitlab_config_smtp_enabled%}
+### GitLab email server settings
+###! Docs: https://docs.gitlab.com/omnibus/settings/smtp.html
+###! **Use smtp instead of sendmail/postfix.**
+gitlab_rails['smtp_enable'] = true
+gitlab_rails['smtp_address'] = "{{gitlab_config_smtp_address}}"
+gitlab_rails['smtp_port'] = {{gitlab_config_smtp_port}}
+{% endif %}
+
+{% if gitlab_config_registry_enabled is defined and gitlab_config_registry_enabled %}
+################################################################################
+## Container Registry settings
+##! Docs: https://docs.gitlab.com/ce/administration/container_registry.html
+################################################################################
+registry_external_url "{{gitlab_config_registry_external_url}}"
+gitlab_rails['registry_enabled'] = true
+gitlab_rails['registry_path'] = "{{gitlab_config_registry_path}}"
+{% endif %}
+
+{% if gitlab_config_postgresql_shared_buffers is defined %}
+##! **recommend value is 1/4 of total RAM, up to 14GB.**
+postgresql['shared_buffers'] = "{{gitlab_config_postgresql_shared_buffers}}"
+{% endif %}
+
+{% if gitlab_config_postgresql_log_directory is defined %}
+postgresql['log_directory'] = "{{gitlab_config_postgresql_log_directory}}"
+{% endif %}
+
+{% if gitlab_config_prometheus_enable is defined and gitlab_config_prometheus_enable %}
+##! Docs: https://docs.gitlab.com/omnibus/gitlab-prometheus/prometheus.html
+prometheus['enable'] = true
+{% if gitlab_config_prometheus_node_exporter_enable is defined and gitlab_config_prometheus_node_exporter_enable%}
+##! Docs: https://docs.gitlab.com/omnibus/gitlab-prometheus/node-exporter.html
+node_exporter['enable'] = true
+{% endif %}
+{% endif %}
+
+{% if gitlab_config_nginx_redirect_to_https is defined and gitlab_config_nginx_redirect_to_https %}
+##! Docs: https://docs.gitlab.com/omnibus/settings/nginx.html
+nginx['redirect_http_to_https'] = true
+{% endif %}
+
+{% if gitlab_config_nginx_redirect_to_https is defined and gitlab_config_nginx_redirect_to_https %}
+##! Docs: https://docs.gitlab.com/omnibus/settings/nginx.html
+nginx['redirect_http_to_https'] = true
+{% endif %}
+
+{% if gitlab_config_nginx_ssl_certificate is defined %}
+nginx['ssl_certificate'] = "{{gitlab_config_nginx_ssl_certificate}}"
+{% endif %}
+
+{% if gitlab_config_nginx_ssl_certificate_key is defined %}
+nginx['ssl_certificate_key'] = "{{gitlab_config_nginx_ssl_certificate_key}}"
+{% endif %}
+
+{% if gitlab_config_custom is defined %}
+{{gitlab_config_custom}}
+{% endif %}
