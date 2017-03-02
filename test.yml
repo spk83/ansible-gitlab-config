@@ -2,4 +2,5 @@
 - hosts: all
   roles:
     - role: '{{playbook_dir}}'
-      
+      gitlab_config_reconfigure: false
+      gitlab_config_dest: /tmp
