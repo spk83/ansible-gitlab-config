@@ -1,0 +1,10 @@
+---
+- name: create cronjob to take nightly backups
+  become: yes
+  become_user: root
+  cron:
+    name: "gitlab-ce-nightly-backups"
+    minute: "0"
+    hour: "2"
+    job: "/opt/gitlab/bin/gitlab-rake gitlab:backup:create"
+    state: present

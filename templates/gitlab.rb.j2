@@ -40,11 +40,20 @@ gitlab_rails['ldap_servers'] = YAML.load <<-'EOS' # remember to close this block
     allow_username_or_email_login: {{gitlab_config_allow_username_or_email_login | to_json}}
     block_auto_created_users: {{gitlab_config_ldap_block_auto_created_users | to_json}}
     base: '{{gitlab_config_ldap_base}}'
-    user_filter: '{{gitlab_config_ldap_use_filter}}'
+    user_filter: '{{gitlab_config_ldap_user_filter}}'
 EOS
 {% endif %}
 
-{% if gitlab_config_manage_backup_path is defined and gitlab_config_manage_backup_path %}
+{% if gitlab_config_backup_upload_nfs is defined and gitlab_config_backup_upload_nfs %}
+###! Docs: https://docs.gitlab.com/ce/raketasks/backup_restore.html#uploading-to-locally-mounted-shares
+gitlab_rails['backup_upload_connection'] = {
+  :provider => '{{gitlab_config_backup_upload_connection_provider}}',
+  :local_root => '{{gitlab_config_backup_upload_connection_local_root}}'
+}
+{% if gitlab_config_backup_upload_remote_directory is defined and gitlab_config_backup_upload_remote_directory %}
+gitlab_rails['backup_upload_remote_directory'] = "{{gitlab_config_backup_upload_remote_directory}}"
+{% endif %}
+{% elif gitlab_config_manage_backup_path is defined and gitlab_config_manage_backup_path %}
 ### Backup Settings
 ###! Docs: https://docs.gitlab.com/omnibus/settings/backups.html
 gitlab_rails['manage_backup_path'] = true
@@ -58,14 +67,6 @@ gitlab_rails['backup_archive_permissions'] = {{gitlab_config_backup_archive_perm
 
 {% if gitlab_config_backup_keep_time is defined %}
 gitlab_rails['backup_keep_time'] = {{gitlab_config_backup_keep_time}}
-{% endif %}
-
-{% if gitlab_config_backup_upload_nfs is defined and gitlab_config_backup_upload_nfs %}
-gitlab_rails['backup_upload_connection'] = {
-  :provider => '{{gitlab_config_backup_upload_connection_provider}}',
-  :local_root => '{{gitlab_config_backup_upload_connection_local_root}}'
-}
-gitlab_rails['backup_upload_remote_directory'] = "{{gitlab_config_backup_upload_remote_directory}}"
 {% endif %}
 
 {% if gitlab_config_smtp_enabled is defined and gitlab_config_smtp_enabled%}

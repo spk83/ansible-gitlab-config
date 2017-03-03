@@ -2,6 +2,17 @@
 - include: pki.yml
   when: gitlab_config_enable_https|default(false)
 
+- name: create backup dir
+  become: yes
+  become_user: root
+  when: gitlab_config_manage_backup_path|default(false) or gitlab_config_backup_upload_nfs|default(false)
+  file:
+    path: '{{gitlab_config_backup_dir}}'
+    state: directory
+    mode: 0755
+    owner: git
+    group: git
+
 - name: load gitlab-config file
   become: yes
   become_user: root
@@ -16,3 +27,6 @@
   become_user: root
   when: gitlab_config_reconfigure|default(true) and load_config|changed
   command: gitlab-ctl reconfigure
+
+- include: backup.yml
+  when: gitlab_config_auto_nightly_backup | default(true)
