@@ -18,6 +18,11 @@ gitlab_rails['gitlab_email_from'] = "{{gitlab_config_email_from}}"
 gitlab_rails['gitlab_email_reply_to'] = "{{gitlab_config_email_reply_to}}"
 {% endif %}
 
+{% if gitlab_config_usage_ping is defined %}
+### Usage Statistics
+# gitlab_rails['usage_ping_enabled'] = {{gitlab_config_usage_ping | to_json}}
+{% endif %}
+
 {% if gitlab_config_ldap_enabled is defined and gitlab_config_ldap_enabled %}
 ### LDAP Settings
 ###! Docs: https://docs.gitlab.com/omnibus/settings/ldap.html
@@ -33,12 +38,16 @@ gitlab_rails['ldap_servers'] = YAML.load <<-'EOS' # remember to close this block
     host: '{{gitlab_config_ldap_host}}'
     port: {{gitlab_config_ldap_port}}
     uid: '{{gitlab_config_ldap_uid}}'
-    method: '{{gitlab_config_ldap_method}}' # "tls" or "ssl" or "plain"
     bind_dn: '{{gitlab_config_ldap_bind_dn}}'
     password: '{{gitlab_config_ldap_password}}'
-    active_directory: {{gitlab_config_ldap_active_directory | to_json}}
-    allow_username_or_email_login: {{gitlab_config_allow_username_or_email_login | to_json}}
-    block_auto_created_users: {{gitlab_config_ldap_block_auto_created_users | to_json}}
+    encryption: '{{gitlab_config_ldap_encryption}}' # "tls" or "ssl" or "plain"
+    verify_certificates: {{gitlab_config_ldap_verify_certificates | to_json}}
+    ca_file: '{{gitlab_config_ldap_ca_file | default("")}}'
+    ssl_version: '{{gitlab_config_ldap_ssl_version | default("")}}'
+    timeout: {{gitlab_config_ldap_timeout| default(10)}}
+    active_directory: {{gitlab_config_ldap_active_directory | default(true) | to_json}}
+    allow_username_or_email_login: {{gitlab_config_allow_username_or_email_login | default(false) | to_json}}
+    block_auto_created_users: {{gitlab_config_ldap_block_auto_created_users | default(false) | to_json}}
     base: '{{gitlab_config_ldap_base}}'
     user_filter: '{{gitlab_config_ldap_user_filter}}'
 EOS

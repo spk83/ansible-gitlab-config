@@ -8,3 +8,5 @@ gitlab_config_pki_cert_src: '{{gitlab_config_src_pki_dir | default("~/pki")}}/{{
 gitlab_config_pki_cert_dest : '{{gitlab_config_dest_pki_dir | default("/etc/gitlab/ssl")}}/{{gitlab_config_pki_cert_file}}'
 
 gitlab_config_backup_dir: "{% if gitlab_config_backup_upload_nfs is defined and gitlab_config_backup_upload_nfs %}{{gitlab_config_backup_upload_connection_local_root}}{% else %}{{gitlab_config_backup_path|default('/var/opt/gitlab/backups')}}{% endif %}"
+
+gitlab_config_auto_nightly_backup_config_data_path: "{% if gitlab_config_backup_config_data_path is defined %}{{gitlab_config_backup_config_data_path}}{% else %}{{gitlab_config_backup_path | default('/var/opt/gitlab/backups')}}{% endif %}"

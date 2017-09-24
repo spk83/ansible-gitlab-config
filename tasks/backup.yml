@@ -1,10 +1,20 @@
 ---
-- name: create cronjob to take nightly backups
+- name: create cronjob to take nightly backup of application data
   become: yes
   become_user: root
   cron:
-    name: "gitlab-ce-nightly-backups"
+    name: "gitlab-ce-nightly-backups-app-data"
     minute: "0"
     hour: "2"
     job: "/opt/gitlab/bin/gitlab-rake gitlab:backup:create"
+    state: present
+
+- name: create cronjob to take nightly backup of configuration data
+  become: yes
+  become_user: root
+  cron:
+    name: "gitlab-ce-nightly-backups-config-data"
+    minute: "0"
+    hour: "2"
+    job: 'umask 0077; tar cfz {{gitlab_config_auto_nightly_backup_config_data_path}}/$(date "+etc-gitlab-\%s.tgz") -C / etc/gitlab'
     state: present

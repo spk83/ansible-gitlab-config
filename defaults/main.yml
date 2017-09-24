@@ -8,6 +8,8 @@ gitlab_config_reconfigure: true
 # Take nightly backup of gitlab application and metadata
 gitlab_config_auto_nightly_backup: true
 
+# gitlab_config_backup_config_data_path: /var/opt/gitlab/config-backups
+
 # Required
 gitlab_config_external_url: http://example.com
 
@@ -19,16 +21,22 @@ gitlab_config_external_url: http://example.com
 
 # gitlab_config_email_reply_to: xyz@example.com
 
+# gitlab_config_usage_ping: true
+
 # gitlab_config_ldap_enabled: true
 # gitlab_config_ldap_label: LDAP
 # gitlab_config_ldap_host: _your_ldap_server
 # gitlab_config_ldap_port: 389
 # gitlab_config_ldap_uid: samAccountName
-# gitlab_config_ldap_method: plain # "tls" or "ssl" or "plain"
 # gitlab_config_ldap_bind_dn: _the_full_dn_of_the_user_you_will_bind_with
 # gitlab_config_ldap_password: _the_password_of_the_bind_user
+# gitlab_config_ldap_encryption: plain # "tls" or "ssl" or "plain"
+# gitlab_config_ldap_verify_certificates: true
+# gitlab_config_ldap_ca_file: '' # eg '/etc/ca.pem' if using internal CA
+# gitlab_config_ldap_ssl_version: '' # eg "TLSv1_1", if the OpenSSL default is not appropriate
+# gitlab_config_ldap_timeout: 10 # timeout for LDAP queries, in seconds
 # gitlab_config_ldap_active_directory: true
-# gitlab_config_allow_username_or_email_login: true
+# gitlab_config_allow_username_or_email_login: false
 # gitlab_config_ldap_block_auto_created_users: false
 # gitlab_config_ldap_base: ''
 # gitlab_config_ldap_user_filter: ''

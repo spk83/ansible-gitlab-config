@@ -1,7 +1,7 @@
 spk83.gitlab-config
 ===================
 
-
+[![CircleCI](https://circleci.com/gh/spk83/ansible-gitlab-config/tree/master.svg?style=shield)](https://circleci.com/gh/spk83/ansible-gitlab-config/tree/master)
 
 Requirements
 ------------
