@@ -51,6 +51,14 @@ gitlab_rails['ldap_servers'] = YAML.load <<-'EOS' # remember to close this block
     block_auto_created_users: {{gitlab_config_ldap_block_auto_created_users | default(false) | to_json}}
     base: '{{gitlab_config_ldap_base}}'
     user_filter: '{{gitlab_config_ldap_user_filter}}'
+{%- if gitlab_config_ldap_attributes is defined %}
+    attributes:
+      username: {{gitlab_config_ldap_attributes.username}}
+      email: {{gitlab_config_ldap_attributes.email}}
+      name: '{{gitlab_config_ldap_attributes.name}}'
+      first_name: '{{gitlab_config_ldap_attributes.first_name}}'
+      last_name: '{{gitlab_config_ldap_attributes.last_name}}'
+{%- endif %}
 EOS
 {% endif %}
 

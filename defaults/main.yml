@@ -40,6 +40,12 @@ gitlab_config_external_url: http://example.com
 # gitlab_config_ldap_block_auto_created_users: false
 # gitlab_config_ldap_base: ''
 # gitlab_config_ldap_user_filter: ''
+# gitlab_config_ldap_attributes:
+#   username: "['uid']"
+#   email: "['mail']"
+#   name: cn
+#   first_name: givenName
+#   last_name: sn
 
 # gitlab_config_manage_backup_path: true
 # gitlab_config_backup_path: /var/opt/gitlab/backups
