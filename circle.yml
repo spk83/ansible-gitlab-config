@@ -5,8 +5,8 @@ machine:
 
 dependencies:
   pre:
-    - sudo -H pip install --upgrade pip
-    - sudo -H pip install circleci-helpers ansible-galaxy-local-deps dcb==0.0.14
+    - pyenv global 3.5.2
+    - sudo pip install circleci-helpers ansible-galaxy-local-deps dcb==0.0.14
     - ansible-galaxy-local-deps-write
 
 test:
