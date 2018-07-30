@@ -75,15 +75,20 @@ gitlab_config_external_url: http://example.com
 # gitlab_config_pki_key_suffix: '.key'
 # gitlab_config_pki_cert_suffix: '.crt'
 # gitlab_config_nginx_redirect_to_https: true
-#
+
+# Pass custom environment variables - https://docs.gitlab.com/omnibus/settings/environment-variables.html
+# gitlab_config_custom_env_vars:
+#   gitlab_rails:
+#     - key: http_proxy
+#       value: http://httpproxy.com:8080
+#     - key: https_proxy
+#       value: https://httpsproxy.com:8080
+#     - key: no_proxy
+#       value: localhost,127.0.0.1
+
 # For all other settings listed on - https://gitlab.com/gitlab-org/omnibus-gitlab/blob/master/files/gitlab-config-template/gitlab.rb.template ,
 # use following map to add custom settings
 # gitlab_config_custom: |+
 #   sidekiq['log_directory'] = "/var/log/gitlab/sidekiq"
 #   redis['enable'] = true
 #   nginx['ssl_verify_client'] = "off"
-
-# gitlab_config_proxy_enabled: true
-# gitlab_config_proxy_http: http://httpproxy.com:8080
-# gitlab_config_proxy_https: https://httpsproxy.com:8080
-# gitlab_config_proxy_noproxy: localhost,127.0.0.1

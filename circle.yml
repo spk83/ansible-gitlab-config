@@ -5,8 +5,8 @@ machine:
 
 dependencies:
   pre:
-    - pyenv global 3.5.2
-    - sudo pip install circleci-helpers ansible-galaxy-local-deps dcb==0.0.14
+    - sudo -H pip install --upgrade pip
+    - sudo -H pip install circleci-helpers ansible-galaxy-local-deps dcb==0.0.14
     - ansible-galaxy-local-deps-write
 
 test:
@@ -15,9 +15,8 @@ test:
           circle-matrix <<"EHD"
             env:
               - OS=centos_7
-              - OS=fedora_23
-              - OS=fedora_24
-              - OS=fedora_25
+              - OS=fedora_26
+              - OS=fedora_27
               - OS=ubuntu_trusty
               - OS=ubuntu_xenial
 

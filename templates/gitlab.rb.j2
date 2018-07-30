@@ -6,14 +6,6 @@
 ##! https://docs.gitlab.com/omnibus/settings/configuration.html#configuring-the-external-url-for-gitlab
 external_url "{{gitlab_config_external_url}}"
 
-{% if gitlab_config_proxy_enabled is defined and gitlab_config_proxy_enabled %}
-gitlab_rails['env'] = {
-  "http_proxy" => "{{gitlab_config_proxy_http}}",
-  "https_proxy" => "{{gitlab_config_proxy_https}}",
-  "no_proxy" => "{{gitlab_config_proxy_noproxy}}"
-}
-{% endif %}
-
 {% if gitlab_config_timezone is defined %}
 gitlab_rails['timezone'] = "{{gitlab_config_timezone}}"
 {% endif %}
@@ -130,6 +122,17 @@ nginx['ssl_certificate_key'] = "{{gitlab_config_pki_key_dest}}"
 {% if gitlab_config_nginx_redirect_to_https is defined and gitlab_config_nginx_redirect_to_https %}
 nginx['redirect_http_to_https'] = true
 {% endif %}
+{% endif %}
+
+{% if gitlab_config_custom_env_vars is defined %}
+##! Docs: https://docs.gitlab.com/omnibus/settings/environment-variables.html
+{% for component,env_vars in gitlab_config_custom_env_vars.iteritems() %}
+{{ component }}['env'] = {
+  {% for var in env_vars %}
+  {{ var.key | quote }} => {{ var.value | quote }}{% if not loop.last %},{% endif %}
+  {% endfor %}
+}
+{% endfor %}
 {% endif %}
 
 {% if gitlab_config_custom is defined %}

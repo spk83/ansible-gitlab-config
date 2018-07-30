@@ -1,7 +1,8 @@
 spk83.gitlab-config
 ===================
+[![Build Status](https://travis-ci.org/spk83/ansible-gitlab-config.svg?branch=master)](https://travis-ci.org/spk83/ansible-gitlab-config)
 
-[![CircleCI](https://circleci.com/gh/spk83/ansible-gitlab-config/tree/master.svg?style=shield)](https://circleci.com/gh/spk83/ansible-gitlab-config/tree/master)
+Configure Gitlab CE with configurations in `gitlab.rb`
 
 Requirements
 ------------
