@@ -82,3 +82,8 @@ gitlab_config_external_url: http://example.com
 #   sidekiq['log_directory'] = "/var/log/gitlab/sidekiq"
 #   redis['enable'] = true
 #   nginx['ssl_verify_client'] = "off"
+
+# gitlab_config_proxy_enabled: true
+# gitlab_config_proxy_http: http://httpproxy.com:8080
+# gitlab_config_proxy_https: https://httpsproxy.com:8080
+# gitlab_config_proxy_noproxy: localhost,127.0.0.1
