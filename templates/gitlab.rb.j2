@@ -43,11 +43,11 @@ gitlab_rails['ldap_servers'] = YAML.load <<-'EOS' # remember to close this block
     password: '{{gitlab_config_ldap_password}}'
     encryption: '{{gitlab_config_ldap_encryption}}' # "tls" or "ssl" or "plain"
     verify_certificates: {{gitlab_config_ldap_verify_certificates | to_json}}
-    ca_file: '{{gitlab_config_ldap_ca_file | default("")}}'
     ssl_version: '{{gitlab_config_ldap_ssl_version | default("")}}'
     timeout: {{gitlab_config_ldap_timeout| default(10)}}
     active_directory: {{gitlab_config_ldap_active_directory | default(true) | to_json}}
     allow_username_or_email_login: {{gitlab_config_allow_username_or_email_login | default(false) | to_json}}
+    lowercase_usernames: {{gitlab_config_ldap_lowercase_usernames | default(false) | to_json}}
     block_auto_created_users: {{gitlab_config_ldap_block_auto_created_users | default(false) | to_json}}
     base: '{{gitlab_config_ldap_base}}'
     user_filter: '{{gitlab_config_ldap_user_filter}}'
@@ -62,13 +62,15 @@ gitlab_rails['ldap_servers'] = YAML.load <<-'EOS' # remember to close this block
 EOS
 {% endif %}
 
-{%- if gitlab_config_backup_upload_nfs is defined and gitlab_config_backup_upload_nfs %}
-###! Docs: https://docs.gitlab.com/ce/raketasks/backup_restore.html#uploading-to-locally-mounted-shares
+{%- if gitlab_config_backup_upload is defined %}
+### Backup Settings
+###! Docs: https://docs.gitlab.com/ce/raketasks/backup_restore.html
 gitlab_rails['backup_upload_connection'] = {
-  :provider => '{{gitlab_config_backup_upload_connection_provider}}',
-  :local_root => '{{gitlab_config_backup_upload_connection_local_root}}'
+{%- for key,value in gitlab_config_backup_upload.iteritems() %}
+  {{ key | to_json }} => {{ value | to_json }}{% if not loop.last %},{% endif %}
+{%- endfor %}
 }
-{% if gitlab_config_backup_upload_remote_directory is defined and gitlab_config_backup_upload_remote_directory %}
+{% if gitlab_config_backup_upload_remote_directory is defined %}
 gitlab_rails['backup_upload_remote_directory'] = "{{gitlab_config_backup_upload_remote_directory}}"
 {% endif %}
 {% elif gitlab_config_manage_backup_path is defined and gitlab_config_manage_backup_path %}
@@ -84,6 +86,7 @@ gitlab_rails['backup_archive_permissions'] = {{gitlab_config_backup_archive_perm
 {% endif %}
 
 {%- if gitlab_config_backup_keep_time is defined %}
+###! The duration in seconds to keep backups before they are allowed to be deleted
 gitlab_rails['backup_keep_time'] = {{gitlab_config_backup_keep_time}}
 {% endif %}
 
@@ -102,30 +105,83 @@ gitlab_rails['smtp_port'] = {{gitlab_config_smtp_port}}
 ##! Docs: https://docs.gitlab.com/ce/administration/container_registry.html
 ################################################################################
 registry_external_url "{{gitlab_config_registry_external_url}}"
-gitlab_rails['registry_enabled'] = true
-gitlab_rails['registry_path'] = "{{gitlab_config_registry_path}}"
+registry['enabled'] = true
+{%- if gitlab_config_registry_backend_storage is defined %}
+### Registry backend storage
+###! Docs: https://docs.gitlab.com/ce/administration/container_registry.html#container-registry-storage-driver
+registry['storage'] = {
+{%- for driver,config in gitlab_config_registry_backend_storage.iteritems() %}
+  {{ driver | to_json }} => {
+  {%- for key,value in config.iteritems() %}
+    {{ key | to_json }} => {{ value | to_json }}{% if not loop.last %},{% endif %}
+  {%- endfor %}
+  }{% if not loop.last %},{% endif %}
+{%- endfor %}
+}
+{%- endif %}
 {% endif %}
 
 {%- if gitlab_config_postgresql_shared_buffers is defined %}
+################################################################
+## GitLab PostgreSQL
+################################################################
+
+###! Changing any of these settings requires a restart of postgresql.
+###! By default, reconfigure reloads postgresql if it is running. If you
+###! change any of these settings, be sure to run `gitlab-ctl restart postgresql`
+###! after reconfigure in order for the changes to take effect.
+
 ##! **recommend value is 1/4 of total RAM, up to 14GB.**
 postgresql['shared_buffers'] = "{{gitlab_config_postgresql_shared_buffers}}"
 {% endif %}
 
-{%- if gitlab_config_postgresql_log_directory is defined %}
-postgresql['log_directory'] = "{{gitlab_config_postgresql_log_directory}}"
-{% endif %}
-
 {%- if gitlab_config_prometheus_enable is defined and gitlab_config_prometheus_enable %}
-##! Docs: https://docs.gitlab.com/omnibus/gitlab-prometheus/prometheus.html
+################################################################################
+## Prometheus
+##! Docs: https://docs.gitlab.com/ce/administration/monitoring/prometheus/
+################################################################################
+
 prometheus['enable'] = true
 {% if gitlab_config_prometheus_node_exporter_enable is defined and gitlab_config_prometheus_node_exporter_enable%}
-##! Docs: https://docs.gitlab.com/omnibus/gitlab-prometheus/node-exporter.html
+################################################################################
+## Prometheus Node Exporter
+##! Docs: https://docs.gitlab.com/ce/administration/monitoring/prometheus/node_exporter.html
+################################################################################
+
 node_exporter['enable'] = true
+{% endif %}
+{% if gitlab_config_prometheus_redis_exporter_enable is defined and gitlab_config_prometheus_redis_exporter_enable%}
+################################################################################
+## Prometheus Redis exporter
+##! Docs: https://docs.gitlab.com/ce/administration/monitoring/prometheus/redis_exporter.html
+################################################################################
+
+redis_exporter['enable'] = true
+{% endif %}
+{% if gitlab_config_prometheus_postgres_exporter_enable is defined and gitlab_config_prometheus_postgres_exporter_enable%}
+################################################################################
+## Prometheus Postgres exporter
+##! Docs: https://docs.gitlab.com/ce/administration/monitoring/prometheus/postgres_exporter.html
+################################################################################
+
+postgres_exporter['enable'] = true
+{% endif %}
+{% if gitlab_config_prometheus_gitlab_monitor_enable is defined and gitlab_config_prometheus_gitlab_monitor_enable%}
+################################################################################
+## Prometheus Gitlab monitor
+##! Docs: https://docs.gitlab.com/ce/administration/monitoring/prometheus/gitlab_monitor_exporter.html
+################################################################################
+
+gitlab_monitor['enable'] = true
 {% endif %}
 {% endif %}
 
 {%- if gitlab_config_enable_https is defined and gitlab_config_enable_https %}
+################################################################################
+## GitLab NGINX
 ##! Docs: https://docs.gitlab.com/omnibus/settings/nginx.html
+################################################################################
+
 nginx['ssl_certificate'] = "{{gitlab_config_pki_cert_dest}}"
 nginx['ssl_certificate_key'] = "{{gitlab_config_pki_key_dest}}"
 {% if gitlab_config_nginx_redirect_to_https is defined and gitlab_config_nginx_redirect_to_https %}
@@ -138,7 +194,7 @@ nginx['redirect_http_to_https'] = true
 {%- for component,env_vars in gitlab_config_custom_env_vars.iteritems() %}
 {{ component }}['env'] = {
 {%- for var in env_vars %}
-  {{ var.key | quote }} => {{ var.value | quote }}{% if not loop.last %},{% endif %}
+  {{ var.key | to_json }} => {{ var.value | to_json }}{% if not loop.last %},{% endif %}
 {%- endfor %}
 }
 {% endfor %}
