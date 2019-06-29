@@ -5,23 +5,23 @@
 ##! URL on which GitLab will be reachable.
 ##! For more details on configuring external_url see:
 ##! https://docs.gitlab.com/omnibus/settings/configuration.html#configuring-the-external-url-for-gitlab
-external_url "{{gitlab_config_external_url}}"
+external_url "{{ gitlab_config_external_url }}"
 
 {% if gitlab_config_timezone is defined -%}
-gitlab_rails['timezone'] = "{{gitlab_config_timezone}}"
+gitlab_rails['timezone'] = "{{ gitlab_config_timezone }}"
 {% endif %}
 
 {%- if gitlab_config_email_from is defined %}
-gitlab_rails['gitlab_email_from'] = "{{gitlab_config_email_from}}"
+gitlab_rails['gitlab_email_from'] = "{{ gitlab_config_email_from }}"
 {% endif %}
 
 {%- if gitlab_config_email_reply_to is defined %}
-gitlab_rails['gitlab_email_reply_to'] = "{{gitlab_config_email_reply_to}}"
+gitlab_rails['gitlab_email_reply_to'] = "{{ gitlab_config_email_reply_to }}"
 {% endif %}
 
 {%- if gitlab_config_usage_ping is defined %}
 ### Usage Statistics
-gitlab_rails['usage_ping_enabled'] = {{gitlab_config_usage_ping | to_json}}
+gitlab_rails['usage_ping_enabled'] = {{ gitlab_config_usage_ping | to_json }}
 {% endif %}
 
 {%- if gitlab_config_ldap_enabled is defined and gitlab_config_ldap_enabled %}
@@ -35,29 +35,29 @@ gitlab_rails['ldap_enabled'] = true
 ###! **remember to close this block with 'EOS' below**
 gitlab_rails['ldap_servers'] = YAML.load <<-'EOS' # remember to close this block with 'EOS' below
   main: # 'main' is the GitLab 'provider ID' of this LDAP server
-    label: '{{gitlab_config_ldap_label}}'
-    host: '{{gitlab_config_ldap_host}}'
-    port: {{gitlab_config_ldap_port}}
-    uid: '{{gitlab_config_ldap_uid}}'
-    bind_dn: '{{gitlab_config_ldap_bind_dn}}'
-    password: '{{gitlab_config_ldap_password}}'
-    encryption: '{{gitlab_config_ldap_encryption}}' # "tls" or "ssl" or "plain"
-    verify_certificates: {{gitlab_config_ldap_verify_certificates | to_json}}
-    ssl_version: '{{gitlab_config_ldap_ssl_version | default("")}}'
-    timeout: {{gitlab_config_ldap_timeout| default(10)}}
-    active_directory: {{gitlab_config_ldap_active_directory | default(true) | to_json}}
-    allow_username_or_email_login: {{gitlab_config_allow_username_or_email_login | default(false) | to_json}}
-    lowercase_usernames: {{gitlab_config_ldap_lowercase_usernames | default(false) | to_json}}
-    block_auto_created_users: {{gitlab_config_ldap_block_auto_created_users | default(false) | to_json}}
-    base: '{{gitlab_config_ldap_base}}'
-    user_filter: '{{gitlab_config_ldap_user_filter}}'
+    label: '{{ gitlab_config_ldap_label }}'
+    host: '{{ gitlab_config_ldap_host }}'
+    port: {{ gitlab_config_ldap_port }}
+    uid: '{{ gitlab_config_ldap_uid }}'
+    bind_dn: '{{ gitlab_config_ldap_bind_dn }}'
+    password: '{{ gitlab_config_ldap_password }}'
+    encryption: '{{ gitlab_config_ldap_encryption }}' # "tls" or "ssl" or "plain"
+    verify_certificates: {{ gitlab_config_ldap_verify_certificates | to_json }}
+    ssl_version: '{{ gitlab_config_ldap_ssl_version | default("") }}'
+    timeout: {{ gitlab_config_ldap_timeout| default(10) }}
+    active_directory: {{ gitlab_config_ldap_active_directory | default(true) | to_json }}
+    allow_username_or_email_login: {{ gitlab_config_allow_username_or_email_login | default(false) | to_json }}
+    lowercase_usernames: {{ gitlab_config_ldap_lowercase_usernames | default(false) | to_json }}
+    block_auto_created_users: {{ gitlab_config_ldap_block_auto_created_users | default(false) | to_json }}
+    base: '{{ gitlab_config_ldap_base }}'
+    user_filter: '{{ gitlab_config_ldap_user_filter }}'
 {%- if gitlab_config_ldap_attributes is defined %}
     attributes:
-      username: {{gitlab_config_ldap_attributes.username}}
-      email: {{gitlab_config_ldap_attributes.email}}
-      name: '{{gitlab_config_ldap_attributes.name}}'
-      first_name: '{{gitlab_config_ldap_attributes.first_name}}'
-      last_name: '{{gitlab_config_ldap_attributes.last_name}}'
+      username: {{ gitlab_config_ldap_attributes.username }}
+      email: {{ gitlab_config_ldap_attributes.email }}
+      name: '{{ gitlab_config_ldap_attributes.name }}'
+      first_name: '{{ gitlab_config_ldap_attributes.first_name }}'
+      last_name: '{{ gitlab_config_ldap_attributes.last_name }}'
 {%- endif %}
 EOS
 {% endif %}
@@ -66,28 +66,28 @@ EOS
 ### Backup Settings
 ###! Docs: https://docs.gitlab.com/ce/raketasks/backup_restore.html
 gitlab_rails['backup_upload_connection'] = {
-{%- for key,value in gitlab_config_backup_upload.iteritems() %}
+{%- for key,value in gitlab_config_backup_upload.items() %}
   {{ key | to_json }} => {{ value | to_json }}{% if not loop.last %},{% endif %}
 {%- endfor %}
 }
 {% if gitlab_config_backup_upload_remote_directory is defined %}
-gitlab_rails['backup_upload_remote_directory'] = "{{gitlab_config_backup_upload_remote_directory}}"
+gitlab_rails['backup_upload_remote_directory'] = "{{ gitlab_config_backup_upload_remote_directory }}"
 {% endif %}
 {% elif gitlab_config_manage_backup_path is defined and gitlab_config_manage_backup_path %}
 ### Backup Settings
 ###! Docs: https://docs.gitlab.com/omnibus/settings/backups.html
 gitlab_rails['manage_backup_path'] = true
-gitlab_rails['backup_path'] = "{{gitlab_config_backup_path}}"
+gitlab_rails['backup_path'] = "{{ gitlab_config_backup_path }}"
 {% endif %}
 
 {%- if gitlab_config_backup_archive_permissions is defined %}
 ###! Docs: https://docs.gitlab.com/ce/raketasks/backup_restore.html#backup-archive-permissions
-gitlab_rails['backup_archive_permissions'] = {{gitlab_config_backup_archive_permissions}}
+gitlab_rails['backup_archive_permissions'] = {{ gitlab_config_backup_archive_permissions }}
 {% endif %}
 
 {%- if gitlab_config_backup_keep_time is defined %}
 ###! The duration in seconds to keep backups before they are allowed to be deleted
-gitlab_rails['backup_keep_time'] = {{gitlab_config_backup_keep_time}}
+gitlab_rails['backup_keep_time'] = {{ gitlab_config_backup_keep_time }}
 {% endif %}
 
 {%- if gitlab_config_smtp_enabled is defined and gitlab_config_smtp_enabled %}
@@ -95,8 +95,8 @@ gitlab_rails['backup_keep_time'] = {{gitlab_config_backup_keep_time}}
 ###! Docs: https://docs.gitlab.com/omnibus/settings/smtp.html
 ###! **Use smtp instead of sendmail/postfix.**
 gitlab_rails['smtp_enable'] = true
-gitlab_rails['smtp_address'] = "{{gitlab_config_smtp_address}}"
-gitlab_rails['smtp_port'] = {{gitlab_config_smtp_port}}
+gitlab_rails['smtp_address'] = "{{ gitlab_config_smtp_address }}"
+gitlab_rails['smtp_port'] = {{ gitlab_config_smtp_port }}
 {% endif %}
 
 {%- if gitlab_config_registry_enabled is defined and gitlab_config_registry_enabled %}
@@ -104,15 +104,15 @@ gitlab_rails['smtp_port'] = {{gitlab_config_smtp_port}}
 ## Container Registry settings
 ##! Docs: https://docs.gitlab.com/ce/administration/container_registry.html
 ################################################################################
-registry_external_url "{{gitlab_config_registry_external_url}}"
+registry_external_url "{{ gitlab_config_registry_external_url }}"
 registry['enabled'] = true
 {%- if gitlab_config_registry_backend_storage is defined %}
 ### Registry backend storage
 ###! Docs: https://docs.gitlab.com/ce/administration/container_registry.html#container-registry-storage-driver
 registry['storage'] = {
-{%- for driver,config in gitlab_config_registry_backend_storage.iteritems() %}
+{%- for driver,config in gitlab_config_registry_backend_storage.items() %}
   {{ driver | to_json }} => {
-  {%- for key,value in config.iteritems() %}
+  {%- for key,value in config.items() %}
     {{ key | to_json }} => {{ value | to_json }}{% if not loop.last %},{% endif %}
   {%- endfor %}
   }{% if not loop.last %},{% endif %}
@@ -132,7 +132,7 @@ registry['storage'] = {
 ###! after reconfigure in order for the changes to take effect.
 
 ##! **recommend value is 1/4 of total RAM, up to 14GB.**
-postgresql['shared_buffers'] = "{{gitlab_config_postgresql_shared_buffers}}"
+postgresql['shared_buffers'] = "{{ gitlab_config_postgresql_shared_buffers }}"
 {% endif %}
 
 {%- if gitlab_config_prometheus_enable is defined and gitlab_config_prometheus_enable %}
@@ -182,8 +182,8 @@ gitlab_monitor['enable'] = true
 ##! Docs: https://docs.gitlab.com/omnibus/settings/nginx.html
 ################################################################################
 
-nginx['ssl_certificate'] = "{{gitlab_config_pki_cert_dest}}"
-nginx['ssl_certificate_key'] = "{{gitlab_config_pki_key_dest}}"
+nginx['ssl_certificate'] = "{{ gitlab_config_pki_cert_dest }}"
+nginx['ssl_certificate_key'] = "{{ gitlab_config_pki_key_dest }}"
 {% if gitlab_config_nginx_redirect_to_https is defined and gitlab_config_nginx_redirect_to_https %}
 nginx['redirect_http_to_https'] = true
 {% endif %}
@@ -191,7 +191,7 @@ nginx['redirect_http_to_https'] = true
 
 {%- if gitlab_config_custom_env_vars is defined %}
 ##! Docs: https://docs.gitlab.com/omnibus/settings/environment-variables.html
-{%- for component,env_vars in gitlab_config_custom_env_vars.iteritems() %}
+{%- for component,env_vars in gitlab_config_custom_env_vars.items() %}
 {{ component }}['env'] = {
 {%- for var in env_vars %}
   {{ var.key | to_json }} => {{ var.value | to_json }}{% if not loop.last %},{% endif %}
@@ -201,5 +201,5 @@ nginx['redirect_http_to_https'] = true
 {%- endif %}
 
 {%- if gitlab_config_custom is defined %}
-{{gitlab_config_custom}}
+{{ gitlab_config_custom }}
 {% endif %}

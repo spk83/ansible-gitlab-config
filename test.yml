@@ -1,7 +1,7 @@
 ---
 - hosts: all
   roles:
-    - role: '{{playbook_dir}}'
+    - role: '{{ playbook_dir }}'
       gitlab_config_reconfigure: false
       gitlab_config_dest: /tmp
       gitlab_config_auto_nightly_backup: false

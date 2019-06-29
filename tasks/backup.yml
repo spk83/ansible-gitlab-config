@@ -18,5 +18,5 @@
     name: "gitlab-ce-nightly-backups-config-data"
     minute: "0"
     hour: "2"
-    job: 'umask 0077; FILE=$(date "+etc-gitlab-\%s.tgz"); tar cfz {{gitlab_config_auto_nightly_backup_config_data_path}}/$FILE -C / etc/gitlab; {{gitlab_config_backup_config_data_additional_cmd}}'
+    job: 'umask 0077; FILE=$(date "+etc-gitlab-\%s.tgz"); tar cfz {{ gitlab_config_auto_nightly_backup_config_data_path }}/$FILE -C / etc/gitlab; {{ gitlab_config_backup_config_data_additional_cmd }}'
     state: present
