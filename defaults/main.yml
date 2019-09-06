@@ -15,9 +15,12 @@ gitlab_config_external_url: http://example.com
 
 # gitlab_config_timezone: GMT
 
+# gitlab_config_email_enabled: true
 # gitlab_config_email_from: xyz@example.com
-
+# gitlab_config_email_display_name: Example
 # gitlab_config_email_reply_to: xyz@example.com
+
+# gitlab_config_impersonation_enabled: true
 
 # gitlab_config_usage_ping: true
 
@@ -44,6 +47,33 @@ gitlab_config_external_url: http://example.com
 #   name: cn
 #   first_name: givenName
 #   last_name: sn
+
+# gitlab_config_omniauth_enabled: nil
+# gitlab_config_omniauth_allow_sso:
+#   - saml
+# gitlab_config_omniauth_sync_email_from_provider: saml
+# gitlab_config_omniauth_sync_profile_from_provider:
+#   - saml
+# gitlab_config_omniauth_sync_profile_attributes:
+#   - email
+# gitlab_config_omniauth_auto_sign_in_with_provider: saml
+# gitlab_config_omniauth_block_auto_created_users: true
+# gitlab_config_omniauth_auto_link_ldap_user: false
+# gitlab_config_omniauth_auto_link_saml_user: false
+# gitlab_config_omniauth_external_providers:
+#   - twitter
+#   - google_oauth2
+# gitlab_config_omniauth_allow_bypass_two_factor:
+#   - google_oauth2
+# gitlab_config_omniauth_providers: |+
+#   [
+#     {
+#       "name" => "google_oauth2",
+#       "app_id" => "YOUR APP ID",
+#       "app_secret" => "YOUR APP SECRET",
+#       "args" => {"access_type" => "offline", "approval_prompt" => ""},
+#     },
+#   ]
 
 # gitlab_config_manage_backup_path: true
 # gitlab_config_backup_path: /var/opt/gitlab/backups
@@ -78,14 +108,17 @@ gitlab_config_external_url: http://example.com
 #     bucket: your-s3-bucket
 #     region: your-s3-region
 #     regionendpoint: https://s3.xyz.com
+# gitlab_config_registry_nginx_ssl_certificate: /etc/gitlab/ssl/gitlab.example.com.crt
+# gitlab_config_registry_nginx_ssl_certificate_key: /etc/gitlab/ssl/gitlab.example.com.key
 
 # gitlab_config_postgresql_shared_buffers: 256MB
 
-# gitlab_config_prometheus_enable: true
-# gitlab_config_prometheus_node_exporter_enable: true
-# gitlab_config_prometheus_redis_exporter_enable: true
-# gitlab_config_prometheus_postgres_exporter_enable: true
-# gitlab_config_prometheus_gitlab_monitor_enable: true
+# gitlab_config_prometheus_enabled: true
+# gitlab_config_prometheus_monitoring_enabled: true
+# gitlab_config_prometheus_node_exporter_enabled: true
+# gitlab_config_prometheus_redis_exporter_enabled: true
+# gitlab_config_prometheus_postgres_exporter_enabled: true
+# gitlab_config_prometheus_gitlab_monitor_enabled: true
 
 # To enable HTTPS, change the gitlab_config_external_url to https://example.com
 # gitlab_config_enable_https: true

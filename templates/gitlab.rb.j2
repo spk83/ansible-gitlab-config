@@ -11,12 +11,26 @@ external_url "{{ gitlab_config_external_url }}"
 gitlab_rails['timezone'] = "{{ gitlab_config_timezone }}"
 {% endif %}
 
+{%- if gitlab_config_email_enabled is defined and gitlab_config_email_enabled %}
+### Email Settings
+gitlab_rails['gitlab_email_enabled'] = true
+
 {%- if gitlab_config_email_from is defined %}
 gitlab_rails['gitlab_email_from'] = "{{ gitlab_config_email_from }}"
-{% endif %}
+{%- endif %}
+
+{%- if gitlab_config_email_display_name is defined %}
+gitlab_rails['gitlab_email_display_name'] = "{{ gitlab_config_email_display_name }}"
+{%- endif %}
 
 {%- if gitlab_config_email_reply_to is defined %}
 gitlab_rails['gitlab_email_reply_to'] = "{{ gitlab_config_email_reply_to }}"
+{%- endif %}
+{% endif %}
+
+{%- if gitlab_config_impersonation_enabled is defined %}
+# Impersonation settings
+gitlab_rails['impersonation_enabled'] = {{ gitlab_config_impersonation_enabled | to_json }}
 {% endif %}
 
 {%- if gitlab_config_usage_ping is defined %}
@@ -105,8 +119,8 @@ gitlab_rails['smtp_port'] = {{ gitlab_config_smtp_port }}
 ##! Docs: https://docs.gitlab.com/ce/administration/container_registry.html
 ################################################################################
 registry_external_url "{{ gitlab_config_registry_external_url }}"
-registry['enabled'] = true
-{%- if gitlab_config_registry_backend_storage is defined %}
+registry['enable'] = true
+{% if gitlab_config_registry_backend_storage is defined %}
 ### Registry backend storage
 ###! Docs: https://docs.gitlab.com/ce/administration/container_registry.html#container-registry-storage-driver
 registry['storage'] = {
@@ -118,6 +132,12 @@ registry['storage'] = {
   }{% if not loop.last %},{% endif %}
 {%- endfor %}
 }
+{%- endif %}
+{%- if gitlab_config_registry_nginx_ssl_certificate is defined %}
+registry_nginx['ssl_certificate'] = "{{ gitlab_config_registry_nginx_ssl_certificate}}"
+{%- endif %}
+{%- if gitlab_config_registry_nginx_ssl_certificate_key is defined %}
+registry_nginx['ssl_certificate_key'] = "{{ gitlab_config_registry_nginx_ssl_certificate_key}}"
 {%- endif %}
 {% endif %}
 
@@ -135,14 +155,14 @@ registry['storage'] = {
 postgresql['shared_buffers'] = "{{ gitlab_config_postgresql_shared_buffers }}"
 {% endif %}
 
-{%- if gitlab_config_prometheus_enable is defined and gitlab_config_prometheus_enable %}
+{%- if gitlab_config_prometheus_enabled is defined and gitlab_config_prometheus_enabled %}
 ################################################################################
 ## Prometheus
 ##! Docs: https://docs.gitlab.com/ce/administration/monitoring/prometheus/
 ################################################################################
 
 prometheus['enable'] = true
-{% if gitlab_config_prometheus_node_exporter_enable is defined and gitlab_config_prometheus_node_exporter_enable%}
+{% if gitlab_config_prometheus_node_exporter_enabled is defined and gitlab_config_prometheus_node_exporter_enabled%}
 ################################################################################
 ## Prometheus Node Exporter
 ##! Docs: https://docs.gitlab.com/ce/administration/monitoring/prometheus/node_exporter.html
@@ -150,7 +170,7 @@ prometheus['enable'] = true
 
 node_exporter['enable'] = true
 {% endif %}
-{% if gitlab_config_prometheus_redis_exporter_enable is defined and gitlab_config_prometheus_redis_exporter_enable%}
+{% if gitlab_config_prometheus_redis_exporter_enabled is defined and gitlab_config_prometheus_redis_exporter_enabled%}
 ################################################################################
 ## Prometheus Redis exporter
 ##! Docs: https://docs.gitlab.com/ce/administration/monitoring/prometheus/redis_exporter.html
@@ -158,7 +178,7 @@ node_exporter['enable'] = true
 
 redis_exporter['enable'] = true
 {% endif %}
-{% if gitlab_config_prometheus_postgres_exporter_enable is defined and gitlab_config_prometheus_postgres_exporter_enable%}
+{% if gitlab_config_prometheus_postgres_exporter_enabled is defined and gitlab_config_prometheus_postgres_exporter_enabled%}
 ################################################################################
 ## Prometheus Postgres exporter
 ##! Docs: https://docs.gitlab.com/ce/administration/monitoring/prometheus/postgres_exporter.html
@@ -166,7 +186,7 @@ redis_exporter['enable'] = true
 
 postgres_exporter['enable'] = true
 {% endif %}
-{% if gitlab_config_prometheus_gitlab_monitor_enable is defined and gitlab_config_prometheus_gitlab_monitor_enable%}
+{% if gitlab_config_prometheus_gitlab_monitor_enabled is defined and gitlab_config_prometheus_gitlab_monitor_enabled%}
 ################################################################################
 ## Prometheus Gitlab monitor
 ##! Docs: https://docs.gitlab.com/ce/administration/monitoring/prometheus/gitlab_monitor_exporter.html
@@ -174,6 +194,11 @@ postgres_exporter['enable'] = true
 
 gitlab_monitor['enable'] = true
 {% endif %}
+{% endif %}
+
+{%- if gitlab_config_prometheus_monitoring_enabled is defined %}
+# To completely disable prometheus, and all of it's exporters, set to false
+prometheus_monitoring['enable'] = {{ gitlab_config_prometheus_monitoring_enabled | to_json }}
 {% endif %}
 
 {%- if gitlab_config_enable_https is defined and gitlab_config_enable_https %}
@@ -188,6 +213,45 @@ nginx['ssl_certificate_key'] = "{{ gitlab_config_pki_key_dest }}"
 nginx['redirect_http_to_https'] = true
 {% endif %}
 {% endif %}
+
+{%- if gitlab_config_omniauth_enabled is defined and gitlab_config_omniauth_enabled %}
+### OmniAuth Settings
+###! Docs: https://docs.gitlab.com/ce/integration/omniauth.html
+gitlab_rails['omniauth_enabled'] = true
+{%- if gitlab_config_omniauth_allow_sso is defined %}
+gitlab_rails['omniauth_allow_single_sign_on'] = {{ gitlab_config_omniauth_allow_sso | to_json }}
+{%- endif %}
+{%- if gitlab_config_omniauth_sync_email_from_provider is defined %}
+gitlab_rails['omniauth_sync_email_from_provider'] = "{{ gitlab_config_omniauth_sync_email_from_provider }}"
+{%- endif %}
+{%- if gitlab_config_omniauth_sync_profile_from_provider is defined %}
+gitlab_rails['omniauth_sync_profile_from_provider'] = {{ gitlab_config_omniauth_sync_profile_from_provider | to_json }}
+{%- endif %}
+{%- if gitlab_config_omniauth_sync_profile_attributes is defined %}
+gitlab_rails['omniauth_sync_profile_attributes'] = {{ gitlab_config_omniauth_sync_profile_attributes | to_json }}
+{%- endif %}
+{%- if gitlab_config_omniauth_auto_sign_in_with_provider is defined %}
+gitlab_rails['omniauth_auto_sign_in_with_provider'] = "{{ gitlab_config_omniauth_auto_sign_in_with_provider }}"
+{%- endif %}
+{%- if gitlab_config_omniauth_block_auto_created_users is defined %}
+gitlab_rails['omniauth_block_auto_created_users'] = {{ gitlab_config_omniauth_block_auto_created_users | to_json }}
+{%- endif %}
+{%- if gitlab_config_omniauth_auto_link_ldap_user is defined %}
+gitlab_rails['omniauth_auto_link_ldap_user'] = {{ gitlab_config_omniauth_auto_link_ldap_user | to_json }}
+{%- endif %}
+{%- if gitlab_config_omniauth_auto_link_saml_user is defined %}
+gitlab_rails['omniauth_auto_link_saml_user'] = {{ gitlab_config_omniauth_auto_link_saml_user | to_json }}
+{%- endif %}
+{%- if gitlab_config_omniauth_external_providers is defined %}
+gitlab_rails['omniauth_external_providers'] = {{ gitlab_config_omniauth_external_providers | to_json }}
+{%- endif %}
+{%- if gitlab_config_omniauth_allow_bypass_two_factor is defined %}
+gitlab_rails['omniauth_allow_bypass_two_factor'] = {{ gitlab_config_omniauth_allow_bypass_two_factor | to_json }}
+{%- endif %}
+{%- if gitlab_config_omniauth_providers is defined %}
+gitlab_rails['omniauth_providers'] = {{ gitlab_config_omniauth_providers }}
+{%- endif %}
+{%- endif %}
 
 {%- if gitlab_config_custom_env_vars is defined %}
 ##! Docs: https://docs.gitlab.com/omnibus/settings/environment-variables.html
