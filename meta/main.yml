@@ -10,18 +10,22 @@ galaxy_info:
     - name: EL
       versions:
         - 7
+    - name: Debian
+      versions:
+        - jessie
+        - stretch
+        - buster
     - name: Fedora
       versions:
-        - 26
-        - 27
+        - 28
+        - 29
+        - 30
     - name: Ubuntu
       versions:
         - trusty
         - xenial
-
   galaxy_tags:
     - gitlab
     - configure
 
 dependencies: []
-  

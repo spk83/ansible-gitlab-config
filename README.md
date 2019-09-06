@@ -1,5 +1,6 @@
 spk83.gitlab-config
 ===================
+
 [![Build Status](https://travis-ci.org/spk83/ansible-gitlab-config.svg?branch=master)](https://travis-ci.org/spk83/ansible-gitlab-config)
 
 Configure Gitlab CE with configurations in `gitlab.rb`
