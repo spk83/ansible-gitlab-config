@@ -73,15 +73,15 @@ gitlab_rails['ldap_servers'] = YAML.load <<-'EOS' # remember to close this block
       first_name: '{{ gitlab_config_ldap_attributes.first_name }}'
       last_name: '{{ gitlab_config_ldap_attributes.last_name }}'
 {%- endif %}
-{% if gitlab_config_ldap_group_base is defined %}
+{%- if gitlab_config_ldap_group_base is defined %}
     group_base: '{{ gitlab_config_ldap_group_base }}'
-{% endif %}
-{% if gitlab_config_ldap_admin_group is defined %}
+{%- endif %}
+{%- if gitlab_config_ldap_admin_group is defined %}
     admin_group: '{{ gitlab_config_ldap_admin_group }}'
-{% endif %}
-{% if gitlab_config_ldap_external_groups is defined %}
+{%- endif %}
+{%- if gitlab_config_ldap_external_groups is defined %}
     external_groups: '{{ gitlab_config_ldap_external_groups | to_json }}'
-{% endif %}
+{%- endif %}
 EOS
 {% endif %}
 
