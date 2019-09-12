@@ -48,6 +48,14 @@ gitlab_config_external_url: http://example.com
 #   first_name: givenName
 #   last_name: sn
 
+# gitlab_config_ldap_group_base: ou=groups,dc=example,dc=com
+# gitlab_config_ldap_admin_group: my_admin_group
+# gitlab_config_ldap_external_groups:
+#   - interns
+#   - contractors
+#  gitlab_config_ldap_sync_worker_cron: "0 */12 * * *"
+
+
 # gitlab_config_omniauth_enabled: nil
 # gitlab_config_omniauth_allow_sso:
 #   - saml
