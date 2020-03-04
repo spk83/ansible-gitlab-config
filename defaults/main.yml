@@ -13,6 +13,13 @@ gitlab_config_external_url: http://example.com
 
 # Optional - Following are NOT default values, are only examples
 
+# to configure the gitlab rails environment to make requests through a web proxy
+# https://gitlab.com/gitlab-org/gitlab-foss/issues/680
+#proxy_env:
+#  http_proxy: http://webproxy.example.com:3128
+#  http_proxy: http://webproxy.example.com:3128
+#  no_proxy: '*.example.com'
+
 # gitlab_config_timezone: GMT
 
 # gitlab_config_email_enabled: true
