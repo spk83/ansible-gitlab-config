@@ -126,6 +126,25 @@ gitlab_config_external_url: http://example.com
 # gitlab_config_registry_nginx_ssl_certificate: /etc/gitlab/ssl/gitlab.example.com.crt
 # gitlab_config_registry_nginx_ssl_certificate_key: /etc/gitlab/ssl/gitlab.example.com.key
 
+# gitlab_config_packages_enabled: true
+# gitlab_config_packages_storage_path: "/var/opt/gitlab/gitlab-rails/shared/packages"
+# gitlab_config_packages_backend_storage_enabled: true
+# gitlab_config_packages_backend_storage_direct_upload: false # Use Object Storage directly for uploads instead of background uploads if enabled
+# gitlab_config_packages_backend_storage_background_upload: true # Temporary option to limit automatic upload
+# gitlab_config_packages_backend_storage_proxy_download: false # Passthrough all downloads via GitLab instead of using Redirects to Object Storage
+# gitlab_config_packages_backend_storage_bucket: bucket_name
+# gitlab_config_packages_backend_storage_connection: 
+#   ## If the provider is AWS S3
+#   provider: AWS
+#   region: eu-west-1
+#   aws_access_key_id: AWS_ACCESS_KEY_ID
+#   aws_secret_access_key AWS_SECRET_ACCESS_KEY
+#   ## If the provider is other than AWS (an S3-compatible one)
+#   host: s3.xyz.com
+#   aws_signature_version: 4 # For creation of signed URLs. Set to 2 if provider does not support v4.
+#   endpoint: https://s3.xyz.com
+#   path_style: false        # If true, use 'host/bucket_name/object' instead of 'bucket_name.host/object'.
+
 # gitlab_config_postgresql_shared_buffers: 256MB
 
 # gitlab_config_prometheus_enabled: true
