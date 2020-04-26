@@ -176,7 +176,7 @@ gitlab_rails['packages_object_store_enabled'] = true
 gitlab_rails['packages_object_store_direct_upload'] = {{ gitlab_config_packages_backend_storage_direct_upload | default(false) | to_json }}
 gitlab_rails['packages_object_store_background_upload'] = {{ gitlab_config_packages_backend_storage_background_upload | default(true) | to_json }}
 gitlab_rails['packages_object_store_proxy_download'] = {{ gitlab_config_packages_backend_storage_proxy_download | default(false) | to_json }}
-gitlab_rails['packages_object_store_remote_directory'] = {{ gitlab_config_packages_backend_storage_bucket }}
+gitlab_rails['packages_object_store_remote_directory'] = {{ gitlab_config_packages_backend_storage_bucket | to_json }}
 gitlab_rails['packages_object_store_connection'] = {
 {%- for key,value in gitlab_config_packages_backend_storage_connection.items() %}
   {{ key | to_json }} => {{ value | to_json }}{% if not loop.last %},{% endif %}
