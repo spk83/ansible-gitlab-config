@@ -26,6 +26,7 @@ gitlab_config_external_url: http://example.com
 # gitlab_config_email_from: xyz@example.com
 # gitlab_config_email_display_name: Example
 # gitlab_config_email_reply_to: xyz@example.com
+# gitlab_config_cronjob_notification_email: xyz@example.com
 
 # gitlab_config_impersonation_enabled: true
 

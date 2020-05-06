@@ -20,3 +20,19 @@
     hour: "2"
     job: 'umask 0077; FILE=$(date "+etc-gitlab-\%s.tgz"); tar cfz {{ gitlab_config_auto_nightly_backup_config_data_path }}/$FILE -C / etc/gitlab; {{ gitlab_config_backup_config_data_additional_cmd }}'
     state: present
+
+- name: update MAILTO entry of crontab to get output of nightly jobs
+  become: yes
+  become_user: root
+  when: gitlab_config_cronjob_notification_email is defined
+  cronvar:
+    name: MAILTO
+    value: "{{ gitlab_config_cronjob_notification_email }}"
+
+- name: update MAILFROM entry of crontab
+  become: yes
+  become_user: root
+  when: gitlab_config_cronjob_notification_email is defined and gitlab_config_email_from is defined
+  cronvar:
+    name: MAILFROM
+    value: "{{ gitlab_config_email_from }}"
