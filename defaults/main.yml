@@ -1,5 +1,5 @@
 ---
-
+gitlab_ver: 13.10.2
 gitlab_config_dest: /etc/gitlab
 
 # Run gitlab-ctl reconfigure if config has changed
@@ -92,6 +92,26 @@ gitlab_config_external_url: http://example.com
 #   ]
 
 # gitlab_config_manage_backup_path: true
+
+# Backup Command Environment Variables
+gitlab_config_backup_strategy: copy # STRATEGY
+# gitlab_config_backup_timestamp_prefix: [TIMESTAMP] # BACKUP
+# gitlab_config_backup_gzip_rsyncable: true # GZIP_RSYNCABLE
+# gitlab_config_backup_group_duration: daily|weekly # DIRECTORY
+# gitlab_config_backup_exclude_directories: # SKIP
+#   - db # (databases)
+#   - uploads # (attachments)
+#   - builds # (CI job output logs)
+#   - artifacts # (CI job artifacts)
+#   - lfs # (LFS objects)
+#   - registry # (Container Registry Images)
+#   - pages # (Pages Content)
+#   - repositories # (Git repositories data)
+#   - tar # (Tar Creation)
+## v13.3+ https://docs.gitlab.com/ee/raketasks/backup_restore.html#back-up-git-repositories-concurrently
+# gitlab_config_backup_concurrency: 1
+# gitlab_config_backup_storage_concurrency: 1
+
 # gitlab_config_backup_path: /var/opt/gitlab/backups
 
 # gitlab_config_backup_archive_permissions: '0644'
@@ -174,8 +194,20 @@ gitlab_config_external_url: http://example.com
 #       value: localhost,127.0.0.1
 
 # Setting for auto nightly backups
-# gitlab_config_backup_application_data: true
-# gitlab_config_backup_config_data: true
+gitlab_config_backup_application_data: True
+gitlab_config_backup_application_data_schedule:
+  # month: '*'
+  # weekday: '*'
+  # day: '*'
+  # hour: '*'
+  # minute: '*'
+gitlab_config_backup_config_data: True
+gitlab_config_backup_config_data_schedule:
+  # month: '*'
+  # weekday: '*'
+  # day: '*'
+  # hour: '*'
+  # minute: '*'
 # gitlab_config_backup_config_data_path: /var/opt/gitlab/config-backups
 # gitlab_config_backup_config_data_additional_cmd: ''
 

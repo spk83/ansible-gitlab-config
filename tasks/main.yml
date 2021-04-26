@@ -1,32 +1,50 @@
 ---
-- include_tasks: pki.yml
-  when: gitlab_config_enable_https|default(false)
+# - include_tasks: pki.yml
+#   when: gitlab_config_enable_https|default(false)
 
-- name: create backup dir
-  become: yes
-  become_user: root
-  when: gitlab_config_manage_backup_path|default(false) or gitlab_config_backup_use_nfs|default(false)
-  file:
-    path: '{{ gitlab_config_backup_dir }}'
-    state: directory
-    mode: 0755
-    owner: git
-    group: git
+- name: debugging templates
+  loop:
+    - |-
+        {{ gitlab_ver is version("12.3", operator="<") | ternary(
+          [
+            "umask %s" | format(gitlab_config_auto_backup_config_data_permissions),
+            "FILE=$(date \"+etc-gitlab-\%s.tgz")",
+            "tar cfz %s/$FILE -C / %s" | format(gitlab_config_auto_backup_config_data_path, gitlab_config_dest)
+          ],
+          [
+            "gitlab-ctl backup-etc %s" | format(gitlab_config_auto_backup_config_data_path)
+          ]) | join(';') }}
+        {%- if gitlab_config_backup_config_data_additional_cmd is defined %}; {{ gitlab_config_backup_config_data_additional_cmd }}{% endif -%}
+    - '{{ gitlab_config_backup_program }}'
+    - '{{ gitlab_config_backup_command }}'
+  debug:
+    msg: '{{ item }}'
 
-- name: load gitlab-config file
-  become: yes
-  become_user: root
-  register: load_config
-  template:
-    src: gitlab.rb.j2
-    dest: '{{ gitlab_config_dest }}/gitlab.rb'
-    mode: 0600
+# - name: create backup dir
+#   become: yes
+#   become_user: root
+#   when: gitlab_config_manage_backup_path|default(false) or gitlab_config_backup_use_nfs|default(false)
+#   file:
+#     path: '{{ gitlab_config_backup_dir }}'
+#     state: directory
+#     mode: 0755
+#     owner: git
+#     group: git
 
-- name: reconfigure gitlab
-  become: yes
-  become_user: root
-  when: gitlab_config_reconfigure|default(true) and load_config is changed
-  command: gitlab-ctl reconfigure
+# - name: load gitlab-config file
+#   become: yes
+#   become_user: root
+#   register: load_config
+#   template:
+#     src: gitlab.rb.j2
+#     dest: '{{ gitlab_config_dest }}/gitlab.rb'
+#     mode: 0600
 
-- include_tasks: backup.yml
-  when: gitlab_config_auto_nightly_backup | default(true)
+# - name: reconfigure gitlab
+#   become: yes
+#   become_user: root
+#   when: gitlab_config_reconfigure|default(true) and load_config is changed
+#   command: gitlab-ctl reconfigure
+
+# - include_tasks: backup.yml
+#   when: gitlab_config_auto_nightly_backup | default(true)

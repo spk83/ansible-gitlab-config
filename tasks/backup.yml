@@ -2,23 +2,39 @@
 - name: create cronjob to take nightly backup of application data
   become: yes
   become_user: root
-  when: gitlab_config_backup_application_data|default(true)
+  when: gitlab_config_backup_application_data
   cron:
     name: "gitlab-ce-nightly-backups-app-data"
-    minute: "0"
-    hour: "2"
-    job: "/opt/gitlab/bin/gitlab-rake gitlab:backup:create"
+    job: '{{ gitlab_config_backup_program }} {{ gitlab_config_backup_command }}'
+    month: '{{ gitlab_config_backup_application_data_schedule.month | default(omit) }}'
+    weekday: '{{ gitlab_config_backup_application_data_schedule.weekday | default(omit) }}'
+    day: '{{ gitlab_config_backup_application_data_schedule.day | default(omit) }}'
+    hour: '{{ gitlab_config_backup_application_data_schedule.hour | default(omit) }}'
+    minute: '{{ gitlab_config_backup_application_data_schedule.minute | default(omit) }}'
     state: present
 
 - name: create cronjob to take nightly backup of configuration data
   become: yes
   become_user: root
-  when: gitlab_config_backup_config_data|default(true)
+  when: gitlab_config_backup_config_data
   cron:
     name: "gitlab-ce-nightly-backups-config-data"
-    minute: "0"
-    hour: "2"
-    job: 'umask 0077; FILE=$(date "+etc-gitlab-\%s.tgz"); tar cfz {{ gitlab_config_auto_nightly_backup_config_data_path }}/$FILE -C / etc/gitlab; {{ gitlab_config_backup_config_data_additional_cmd }}'
+    job: |-
+      {{ gitlab_ver is version("12.3", operator="<") | ternary(
+        [
+          "umask %s" | format(gitlab_config_auto_backup_config_data_permissions),
+          "FILE=$(date \"+etc-gitlab-\%s.tgz")",
+          "tar cfz %s/$FILE -C / %s" | format(gitlab_config_auto_backup_config_data_path, gitlab_config_dest)
+        ],
+        [
+          "gitlab-ctl backup-etc %s" | format(gitlab_config_auto_backup_config_data_path)
+        ]) | join(';') }}
+      {%- if gitlab_config_backup_config_data_additional_cmd is defined %}; {{ gitlab_config_backup_config_data_additional_cmd }}{% endif -%}
+    month: '{{ gitlab_config_backup_config_data_schedule.month | default(omit) }}'
+    weekday: '{{ gitlab_config_backup_config_data_schedule.weekday | default(omit) }}'
+    day: '{{ gitlab_config_backup_config_data_schedule.day | default(omit) }}'
+    hour: '{{ gitlab_config_backup_config_data_schedule.hour | default(omit) }}'
+    minute: '{{ gitlab_config_backup_config_data_schedule.minute | default(omit) }}'
     state: present
 
 - name: update MAILTO entry of crontab to get output of nightly jobs
