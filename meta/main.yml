@@ -28,6 +28,6 @@ galaxy_info:
     - gitlab
     - configure
 
-dependencies:
-  - role: andrewrothstein.cron
-    version: v1.0.0
+dependencies: []
+  # - role: andrewrothstein.cron
+  #   version: v1.0.0
