@@ -20,16 +20,15 @@
   cron:
     name: "gitlab-ce-nightly-backups-config-data"
     job: |-
-      {{ gitlab_ver is version("12.3", operator="<") | ternary(
+      {{ ((gitlab_ver is version("12.3", operator="<") | ternary(
         [
           "umask %s" | format(gitlab_config_auto_backup_config_data_permissions),
-          "FILE=$(date \"+etc-gitlab-\%s.tgz")",
+          'FILE=$(date "+etc-gitlab-%s.tgz")',
           "tar cfz %s/$FILE -C / %s" | format(gitlab_config_auto_backup_config_data_path, gitlab_config_dest)
         ],
         [
           "gitlab-ctl backup-etc %s" | format(gitlab_config_auto_backup_config_data_path)
-        ]) | join(';') }}
-      {%- if gitlab_config_backup_config_data_additional_cmd is defined %}; {{ gitlab_config_backup_config_data_additional_cmd }}{% endif -%}
+        ])) + (gitlab_config_backup_config_data_addl_cmds | default([]))) | join(";") }}
     month: '{{ gitlab_config_backup_config_data_schedule.month | default(omit) }}'
     weekday: '{{ gitlab_config_backup_config_data_schedule.weekday | default(omit) }}'
     day: '{{ gitlab_config_backup_config_data_schedule.day | default(omit) }}'

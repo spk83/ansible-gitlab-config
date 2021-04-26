@@ -209,7 +209,7 @@ gitlab_config_backup_config_data_schedule:
   # hour: '*'
   # minute: '*'
 # gitlab_config_backup_config_data_path: /var/opt/gitlab/config-backups
-# gitlab_config_backup_config_data_additional_cmd: ''
+# gitlab_config_backup_config_data_addl_cmds: []
 
 # For all other settings listed on - https://gitlab.com/gitlab-org/omnibus-gitlab/blob/master/files/gitlab-config-template/gitlab.rb.template ,
 # use following map to add custom settings
