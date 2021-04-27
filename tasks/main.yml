@@ -13,7 +13,7 @@
         ])) + (gitlab_config_backup_config_data_addl_cmds | default([]))) | join(";") }}
     - |-
       {{ gitlab_config_backup_program }} {{ gitlab_config_backup_command }}
-      {%- for env in (gitlab_config_backup_environment_dict | dict2items | rejectattr("value", "eq", "") | list) %} {{ env.key }}={{ env.value }}{% endfor -%}
+      {%- for env in (gitlab_config_backup_environment_vars | dict2items | rejectattr("value", "eq", "") | list) %} {{ env.key }}={{ env.value }}{% endfor -%}
   debug:
     msg: '{{ item }}'
 
