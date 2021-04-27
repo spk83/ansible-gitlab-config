@@ -96,6 +96,7 @@ gitlab_config_manage_backup_path: False
 gitlab_config_backup_use_nfs: False
 
 # Backup Command Environment Variables
+# gitlab_config_backup_restore_prompt_disable: True
 gitlab_config_backup_strategy: copy
 # gitlab_config_backup_timestamp_prefix: [TIMESTAMP]
 # gitlab_config_backup_gzip_rsyncable: true

@@ -18,7 +18,7 @@
     name: "gitlab-ce-nightly-backups-app-data"
     job: |-
       {{ gitlab_config_backup_program }} {{ gitlab_config_backup_command }}
-      {%- for env in (gitlab_config_backup_environment_dict | dict2items | rejectattr("value", "none") | list) %} {{ env.key }}={{ env.value }}{% endfor -%}
+      {%- for env in (gitlab_config_backup_environment_vars | dict2items | rejectattr("value", "eq", "") | list) %} {{ env.key }}={{ env.value }}{% endfor -%}
     month: '{{ gitlab_config_backup_application_data_schedule.month | default(omit) }}'
     weekday: '{{ gitlab_config_backup_application_data_schedule.weekday | default(omit) }}'
     day: '{{ gitlab_config_backup_application_data_schedule.day | default(omit) }}'
