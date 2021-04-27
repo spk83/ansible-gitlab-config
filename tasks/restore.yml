@@ -6,4 +6,7 @@
     - sidekiq
   command: '{{ gitlab_config_controller_cli }} stop {{ item }}'
 
-
+- name: restore backup from ref={{ gitlab_config_backup_restore_timestamp }}
+  command: |-
+    {{ gitlab_config_backup_program }} {{ gitlab_config_backup_restore_command }}
+      {%- for k,v in gitlab_config_backup_restore_environment_vars.items() %} {{ k }}={{ v }}{% endfor -%}

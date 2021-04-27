@@ -14,6 +14,9 @@
     - |-
       {{ gitlab_config_backup_program }} {{ gitlab_config_backup_command }}
       {%- for env in (gitlab_config_backup_environment_vars | dict2items | rejectattr("value", "eq", "") | list) %} {{ env.key }}={{ env.value }}{% endfor -%}
+    - |- 
+      {{ gitlab_config_backup_program }} {{ gitlab_config_backup_restore_command }}
+      {%- for k,v in gitlab_config_backup_restore_environment_vars.items() %} {{ k }}={{ v }}{% endfor -%}
   debug:
     msg: '{{ item }}'
 

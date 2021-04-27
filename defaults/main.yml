@@ -94,8 +94,9 @@ gitlab_config_external_url: http://example.com
 
 gitlab_config_manage_backup_path: False
 gitlab_config_backup_use_nfs: False
+gitlab_config_backup_restore_enabled: False
 
-# Backup Command Environment Variables
+## Backup Environment Variables
 # gitlab_config_backup_restore_prompt_disable: True
 gitlab_config_backup_strategy: copy
 # gitlab_config_backup_timestamp_prefix: [TIMESTAMP]
@@ -111,9 +112,12 @@ gitlab_config_backup_strategy: copy
 #   - pages # (Pages Content)
 #   - repositories # (Git repositories data)
 #   - tar # (Tar Creation)
-## v13.3+ https://docs.gitlab.com/ee/raketasks/backup_restore.html#back-up-git-repositories-concurrently
+# Note: v13.3+ https://docs.gitlab.com/ee/raketasks/backup_restore.html#back-up-git-repositories-concurrently
 # gitlab_config_backup_concurrency: 1
 # gitlab_config_backup_storage_concurrency: 1
+
+## Backup:Restore Environment Variables
+# gitlab_config_backup_restore_timestamp: [TIMESTAMP]-{{ gitlab_config_mode | default("omnibus") }}
 
 # gitlab_config_backup_path: /var/opt/gitlab/backups
 
@@ -133,6 +137,23 @@ gitlab_config_backup_strategy: copy
 #   aws_secret_access_key: secret123
 #   endPoint: https://s3.abc.com
 # gitlab_config_backup_upload_remote_directory: my.s3.gitlab-backups
+
+gitlab_config_backup_application_data: True
+gitlab_config_backup_application_data_schedule:
+  # month: '*'
+  # weekday: '*'
+  # day: '*'
+  # hour: '*'
+  # minute: '*'
+gitlab_config_backup_config_data: True
+gitlab_config_backup_config_data_schedule:
+  # month: '*'
+  # weekday: '*'
+  # day: '*'
+  # hour: '*'
+  # minute: '*'
+# gitlab_config_backup_config_data_path: /var/opt/gitlab/config-backups
+# gitlab_config_backup_config_data_addl_cmds: []
 
 # gitlab_config_smtp_enabled: true
 # gitlab_config_smtp_address: example.com
@@ -195,24 +216,6 @@ gitlab_config_backup_strategy: copy
 #       value: https://httpsproxy.com:8080
 #     - key: no_proxy
 #       value: localhost,127.0.0.1
-
-# Setting for auto nightly backups
-gitlab_config_backup_application_data: True
-gitlab_config_backup_application_data_schedule:
-  # month: '*'
-  # weekday: '*'
-  # day: '*'
-  # hour: '*'
-  # minute: '*'
-gitlab_config_backup_config_data: True
-gitlab_config_backup_config_data_schedule:
-  # month: '*'
-  # weekday: '*'
-  # day: '*'
-  # hour: '*'
-  # minute: '*'
-# gitlab_config_backup_config_data_path: /var/opt/gitlab/config-backups
-# gitlab_config_backup_config_data_addl_cmds: []
 
 # For all other settings listed on - https://gitlab.com/gitlab-org/omnibus-gitlab/blob/master/files/gitlab-config-template/gitlab.rb.template ,
 # use following map to add custom settings
