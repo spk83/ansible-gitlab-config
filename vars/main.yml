@@ -1,4 +1,6 @@
 ---
+gitlab_config_controller_cli: gitlab-ctl
+
 gitlab_config_eff_user: gitlab_config_user | default("git")
 gitlab_config_eff_group:  gitlab_config_group | default("git")
 
@@ -10,7 +12,7 @@ gitlab_config_pki_cert_file: '{{ inventory_hostname }}{{ gitlab_config_pki_cert_
 gitlab_config_pki_cert_src: '{{ gitlab_config_src_pki_dir | default("~/pki") }}/{{ gitlab_config_pki_cert_file }}'
 gitlab_config_pki_cert_dest: '{{ gitlab_config_dest_pki_dir | default("/etc/gitlab/ssl") }}/{{ gitlab_config_pki_cert_file }}'
 
-gitlab_config_controller_cli: '{{ gitlab_ver is version("12.2", operator=">") | ternary("gitlab-backup", "gitlab-rake") }}'
+gitlab_config_backup_program: '{{ gitlab_ver is version("12.2", operator=">") | ternary("gitlab-backup", "gitlab-rake") }}'
 gitlab_config_backup_command: '{{ gitlab_ver is version("12.2", operator=">") | ternary("create", "gitlab:backup:create") }}'
 gitlab_config_backup_use_nfs: '{{ gitlab_config_backup_upload is defined and gitlab_config_backup_upload[":local_root"] is defined }}'
 gitlab_config_backup_dir: "{% if gitlab_config_backup_use_nfs %}{{ gitlab_config_backup_upload[':local_root'] }}{% else %}{{ gitlab_config_backup_path|default('/var/opt/gitlab/backups') }}{% endif %}"

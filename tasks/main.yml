@@ -1,7 +1,4 @@
 ---
-# - include_tasks: pki.yml
-#   when: gitlab_config_enable_https|default(false)
-
 - name: debugging templates
   loop:
     - |-
@@ -19,20 +16,27 @@
   debug:
     msg: '{{ item }}'
 
-- name: load gitlab-config file
-  become: '{{ gitlab_config_privilege_escalate }}'
-  become_user: root
-  register: gitlab_config
-  template:
-    src: gitlab.rb.j2
-    dest: '{{ gitlab_config_dest }}/gitlab.rb'
-    mode: 0600
+# - name: load gitlab-config file
+#   become: '{{ gitlab_config_privilege_escalate }}'
+#   become_user: root
+#   register: gitlab_config
+#   template:
+#     src: gitlab.rb.j2
+#     dest: '{{ gitlab_config_dest }}/gitlab.rb'
+#     mode: 0600
 
-- name: reconfigure gitlab
-  become: '{{ gitlab_config_privilege_escalate }}'
-  become_user: root
-  when: gitlab_config_reconfigure and gitlab_config is changed
-  command: gitlab-ctl reconfigure
+# - include_tasks: pki.yml
+#   when: gitlab_config_enable_https|default(false)
 
-- include_tasks: backup.yml
-  when: gitlab_config_auto_backup_enabled
+# - include_tasks: backup.yml
+#   when: gitlab_config_auto_backup_enabled
+
+# - name: reconfigure gitlab
+#   become: '{{ gitlab_config_privilege_escalate }}'
+#   become_user: root
+#   when: gitlab_config_reconfigure and gitlab_config is changed
+#   command: gitlab-ctl reconfigure
+
+# - name: restore omnibus gitlab
+#   when: True
+#   include_tasks: restore.yml
