@@ -1,11 +1,24 @@
 ---
+- name: create backup dir
+  become: '{{ gitlab_config_privilege_escalate }}'
+  become_user: root
+  when: gitlab_config_manage_backup_path or gitlab_config_backup_use_nfs
+  file:
+    path: '{{ gitlab_config_backup_dir }}'
+    state: directory
+    mode: 0755
+    owner: '{{ gitlab_config_eff_user }}'
+    group: '{{ gitlab_config_eff_group }}'
+
 - name: create cronjob to take nightly backup of application data
-  become: yes
+  become: '{{ gitlab_config_privilege_escalate }}'
   become_user: root
   when: gitlab_config_backup_application_data
   cron:
     name: "gitlab-ce-nightly-backups-app-data"
-    job: '{{ gitlab_config_backup_program }} {{ gitlab_config_backup_command }}'
+    job: |-
+      {{ gitlab_config_controller_cli }} {{ gitlab_config_backup_command }}
+      {%- for env in (gitlab_config_backup_environment_dict | dict2items | rejectattr("value", "none") | list) %} {{ env.key }}={{ env.value }}{% endfor -%}
     month: '{{ gitlab_config_backup_application_data_schedule.month | default(omit) }}'
     weekday: '{{ gitlab_config_backup_application_data_schedule.weekday | default(omit) }}'
     day: '{{ gitlab_config_backup_application_data_schedule.day | default(omit) }}'
@@ -14,7 +27,7 @@
     state: present
 
 - name: create cronjob to take nightly backup of configuration data
-  become: yes
+  become: '{{ gitlab_config_privilege_escalate }}'
   become_user: root
   when: gitlab_config_backup_config_data
   cron:
@@ -37,7 +50,7 @@
     state: present
 
 - name: update MAILTO entry of crontab to get output of nightly jobs
-  become: yes
+  become: '{{ gitlab_config_privilege_escalate }}'
   become_user: root
   when: gitlab_config_cronjob_notification_email is defined
   cronvar:
@@ -45,7 +58,7 @@
     value: "{{ gitlab_config_cronjob_notification_email }}"
 
 - name: update MAILFROM entry of crontab
-  become: yes
+  become: '{{ gitlab_config_privilege_escalate }}'
   become_user: root
   when: gitlab_config_cronjob_notification_email is defined and gitlab_config_email_from is defined
   cronvar:

@@ -1,12 +1,13 @@
 ---
 gitlab_ver: 13.10.2
 gitlab_config_dest: /etc/gitlab
+gitlab_config_privilege_escalate: True
 
 # Run gitlab-ctl reconfigure if config has changed
-gitlab_config_reconfigure: true
+gitlab_config_reconfigure: True
 
 # Take nightly backup of gitlab application and configuration
-gitlab_config_auto_nightly_backup: true
+gitlab_config_auto_backup_enabled: True
 
 # Required
 gitlab_config_external_url: http://example.com
@@ -91,14 +92,15 @@ gitlab_config_external_url: http://example.com
 #     },
 #   ]
 
-# gitlab_config_manage_backup_path: true
+gitlab_config_manage_backup_path: False
+gitlab_config_backup_use_nfs: False
 
 # Backup Command Environment Variables
-gitlab_config_backup_strategy: copy # STRATEGY
-# gitlab_config_backup_timestamp_prefix: [TIMESTAMP] # BACKUP
-# gitlab_config_backup_gzip_rsyncable: true # GZIP_RSYNCABLE
-# gitlab_config_backup_group_duration: daily|weekly # DIRECTORY
-# gitlab_config_backup_exclude_directories: # SKIP
+gitlab_config_backup_strategy: copy
+# gitlab_config_backup_timestamp_prefix: [TIMESTAMP]
+# gitlab_config_backup_gzip_rsyncable: true
+# gitlab_config_backup_group_duration: daily|weekly
+# gitlab_config_backup_exclude_directories:
 #   - db # (databases)
 #   - uploads # (attachments)
 #   - builds # (CI job output logs)
