@@ -1,5 +1,5 @@
 ---
-gitlab_ver: 13.10.2
+# gitlab_ver: 13.10.2
 gitlab_config_dest: /etc/gitlab
 gitlab_config_privilege_escalate: True
 gitlab_config_privilege_escalation_user: root
