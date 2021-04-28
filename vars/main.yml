@@ -1,5 +1,6 @@
 ---
 gitlab_config_controller_cli: gitlab-ctl
+gitlab_config_secrets_path: '{{ gitlab_config_dest }}/gitlab-secrets.json'
 
 gitlab_config_eff_user: gitlab_config_user | default("git")
 gitlab_config_eff_group:  gitlab_config_group | default("git")
@@ -34,7 +35,7 @@ gitlab_config_backup_environment_vars:
 gitlab_config_backup_restore_environment_vars:
   GITLAB_ASSUME_YES: '{{ gitlab_config_backup_restore_prompt_disable | default(True) | int }}'
   BACKUP: '{{ gitlab_config_backup_restore_timestamp }}'
-  force: yes
+  force: 'yes'
 
 gitlab_config_auto_backup_config_data_path: '{{ gitlab_config_backup_config_data_path | default("/etc/gitlab/config_backup") }}'
 gitlab_config_auto_backup_config_data_permissions: '600'

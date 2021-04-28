@@ -2,6 +2,7 @@
 gitlab_ver: 13.10.2
 gitlab_config_dest: /etc/gitlab
 gitlab_config_privilege_escalate: True
+gitlab_config_privilege_escalation_user: root
 
 # Run gitlab-ctl reconfigure if config has changed
 gitlab_config_reconfigure: True
@@ -94,7 +95,10 @@ gitlab_config_external_url: http://example.com
 
 gitlab_config_manage_backup_path: False
 gitlab_config_backup_use_nfs: False
+
 gitlab_config_backup_restore_enabled: False
+gitlab_config_backup_restore_check_config: True
+gitlab_config_backup_restore_verify_db_secrets: False
 
 ## Backup Environment Variables
 # gitlab_config_backup_restore_prompt_disable: True
@@ -200,7 +204,7 @@ gitlab_config_backup_config_data_schedule:
 # gitlab_config_prometheus_gitlab_monitor_enabled: true
 
 # To enable HTTPS, change the gitlab_config_external_url to https://example.com
-# gitlab_config_enable_https: true
+gitlab_config_enable_https: False
 # gitlab_config_src_pki_dir: ~/pki
 # gitlab_config_dest_pki_dir: /etc/gitlab/ssl
 # gitlab_config_pki_key_suffix: '.key'

@@ -1,12 +1,42 @@
 ---
 - name: stop processes connected to database
+  become: '{{ gitlab_config_privilege_escalate }}'
+  become_user: '{{ gitlab_config_privilege_escalation_user }}'
   loop:
     - unicorn
     - puma
     - sidekiq
   command: '{{ gitlab_config_controller_cli }} stop {{ item }}'
 
-- name: restore backup from ref={{ gitlab_config_backup_restore_timestamp }}
+- name: restore application backup ref={{ gitlab_config_backup_restore_timestamp }}
+  become: '{{ gitlab_config_privilege_escalate }}'
+  become_user: '{{ gitlab_config_privilege_escalation_user }}'
   command: |-
     {{ gitlab_config_backup_program }} {{ gitlab_config_backup_restore_command }}
       {%- for k,v in gitlab_config_backup_restore_environment_vars.items() %} {{ k }}={{ v }}{% endfor -%}
+
+- name: look for gitlab secrets file
+  become: '{{ gitlab_config_privilege_escalate }}'
+  become_user: '{{ gitlab_config_privilege_escalation_user }}'
+  changed_when: False
+  stat:
+    path: '{{ gitlab_config_secrets_path }}'
+  register: gitlab_secrets
+
+- when: gitlab_secrets.stat.exists
+  become: '{{ gitlab_config_privilege_escalate }}'
+  become_user: '{{ gitlab_config_privilege_escalation_user }}'
+  block:
+    - name: reload gitlab
+      loop:
+        - reconfigure
+        - restart
+      command: '{{ gitlab_config_controller_cli }} {{ item }}'
+
+    - name: check gitlab configuration
+      when: gitlab_config_backup_restore_check_config
+      command: gitlab-rake gitlab:check SANITIZE=true
+
+    - name: verify db decryption capabilities
+      when: gitlab_config_backup_restore_verify_db_secrets
+      command: gitlab-rake gitlab:doctor:secrets

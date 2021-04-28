@@ -1,7 +1,7 @@
 ---
 - name: create host pki dir
   become: '{{ gitlab_config_privilege_escalate }}'
-  become_user: root
+  become_user: '{{ gitlab_config_privilege_escalation_user }}'
   file:
     state: directory
     path: '{{ gitlab_config_dest_pki_dir }}'
@@ -9,7 +9,7 @@
 
 - name: install keys/certs
   become: '{{ gitlab_config_privilege_escalate }}'
-  become_user: root
+  become_user: '{{ gitlab_config_privilege_escalation_user }}'
   with_items:
     - { f: '{{ gitlab_config_pki_key_src }}', d: '{{ gitlab_config_pki_key_dest }}', m: '0400' }
     - { f: '{{ gitlab_config_pki_cert_src }}', d: '{{ gitlab_config_pki_cert_dest }}', m: '0400'}
