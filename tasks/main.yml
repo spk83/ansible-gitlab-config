@@ -1,46 +1,25 @@
 ---
-- name: debugging templates
-  loop:
-    - |-
-      {{ ((gitlab_ver is version("12.3", operator="<") | ternary(
-        [
-          "umask %s" | format(gitlab_config_auto_backup_config_data_permissions),
-          'FILE=$(date "+etc-gitlab-\%s.tgz")',
-          "tar cfz %s/$FILE -C / %s" | format(gitlab_config_auto_backup_config_data_path, gitlab_config_dest)
-        ],
-        [
-          "%s backup-etc %s" | format(gitlab_config_controller_cli, gitlab_config_auto_backup_config_data_path)
-        ])) + (gitlab_config_backup_config_data_addl_cmds | default([]))) | join(";") }}
-    - |-
-      {{ gitlab_config_backup_program }} {{ gitlab_config_backup_command }}
-      {%- for env in (gitlab_config_backup_environment_vars | dict2items | rejectattr("value", "eq", "") | list) %} {{ env.key }}={{ env.value }}{% endfor -%}
-    - |- 
-      {{ gitlab_config_backup_program }} {{ gitlab_config_backup_restore_command }}
-      {%- for k,v in gitlab_config_backup_restore_environment_vars.items() %} {{ k }}={{ v }}{% endfor -%}
-  debug:
-    msg: '{{ item }}'
+- name: load gitlab-config file
+  become: '{{ gitlab_config_privilege_escalate }}'
+  become_user: '{{ gitlab_config_privilege_escalation_user }}'
+  register: gitlab_config
+  template:
+    src: gitlab.rb.j2
+    dest: '{{ gitlab_config_dest }}/gitlab.rb'
+    mode: 0600
 
-# - name: load gitlab-config file
-#   become: '{{ gitlab_config_privilege_escalate }}'
-#   become_user: '{{ gitlab_config_privilege_escalation_user }}'
-#   register: gitlab_config
-#   template:
-#     src: gitlab.rb.j2
-#     dest: '{{ gitlab_config_dest }}/gitlab.rb'
-#     mode: 0600
+- include_tasks: pki.yml
+  when: gitlab_config_enable_https
 
-# - include_tasks: pki.yml
-#   when: gitlab_config_enable_https
+- include_tasks: backup.yml
+  when: gitlab_config_auto_backup_enabled
 
-# - include_tasks: backup.yml
-#   when: gitlab_config_auto_backup_enabled
+- name: reconfigure gitlab
+  become: '{{ gitlab_config_privilege_escalate }}'
+  become_user: '{{ gitlab_config_privilege_escalation_user }}'
+  when: gitlab_config_reconfigure and gitlab_config is changed
+  command: '{{ gitlab_config_controller_cli }} reconfigure'
 
-# - name: reconfigure gitlab
-#   become: '{{ gitlab_config_privilege_escalate }}'
-#   become_user: '{{ gitlab_config_privilege_escalation_user }}'
-#   when: gitlab_config_reconfigure and gitlab_config is changed
-#   command: '{{ gitlab_config_controller_cli }} reconfigure'
-
-# - name: restore gitlab
-#   when: gitlab_config_backup_restore_enabled
-#   include_tasks: restore.yml
+- name: restore gitlab
+  when: gitlab_config_backup_restore_enabled
+  include_tasks: restore.yml
