@@ -1,31 +1,25 @@
 ---
-- name: debugging information
-  loop:
-    - '{{ gitlab_ver }}'
-    -  '{{ gitlab_dist }}'
-  debug:
-    msg: '{{ item }}'
-# - name: load gitlab-config file
-#   become: '{{ gitlab_config_privilege_escalate }}'
-#   become_user: '{{ gitlab_config_privilege_escalation_user }}'
-#   register: gitlab_config
-#   template:
-#     src: gitlab.rb.j2
-#     dest: '{{ gitlab_config_dest }}/gitlab.rb'
-#     mode: 0600
+- name: load gitlab-config file
+  become: '{{ gitlab_config_privilege_escalate }}'
+  become_user: '{{ gitlab_config_privilege_escalation_user }}'
+  register: gitlab_config
+  template:
+    src: gitlab.rb.j2
+    dest: '{{ gitlab_config_dest }}/gitlab.rb'
+    mode: 0600
 
-# - include_tasks: pki.yml
-#   when: gitlab_config_enable_https
+- include_tasks: pki.yml
+  when: gitlab_config_enable_https
 
-# - include_tasks: backup.yml
-#   when: gitlab_config_auto_backup_enabled
+- include_tasks: backup.yml
+  when: gitlab_config_auto_backup_enabled
 
-# - name: reconfigure gitlab
-#   become: '{{ gitlab_config_privilege_escalate }}'
-#   become_user: '{{ gitlab_config_privilege_escalation_user }}'
-#   when: gitlab_config_reconfigure and gitlab_config is changed
-#   command: '{{ gitlab_config_controller_cli }} reconfigure'
+- name: reconfigure gitlab
+  become: '{{ gitlab_config_privilege_escalate }}'
+  become_user: '{{ gitlab_config_privilege_escalation_user }}'
+  when: gitlab_config_reconfigure and gitlab_config is changed
+  command: '{{ gitlab_config_controller_cli }} reconfigure'
 
-# - name: restore gitlab
-#   when: gitlab_config_backup_restore_enabled
-#   include_tasks: restore.yml
+- name: restore gitlab
+  when: gitlab_config_backup_restore_enabled
+  include_tasks: restore.yml
