@@ -38,5 +38,4 @@ gitlab_config_backup_restore_environment_vars:
   force: 'yes'
 
 gitlab_config_auto_backup_config_data_path: '{{ gitlab_config_backup_config_data_path | default("/etc/gitlab/config_backup") }}'
-gitlab_config_auto_backup_config_data_permissions: '600'
-# "{% if gitlab_config_backup_config_data_path is defined %}{{ gitlab_config_backup_config_data_path }}{% else %}{{ gitlab_config_backup_path | default('/var/opt/gitlab/backups') }}{% endif %}"
+gitlab_config_auto_backup_config_data_permissions: '0600'
