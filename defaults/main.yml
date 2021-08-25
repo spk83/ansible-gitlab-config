@@ -12,6 +12,7 @@ gitlab_config_auto_backup_enabled: True
 
 # Required
 gitlab_config_external_url: http://example.com
+gitlab_config_letsencrypt_enabled: true
 
 # Optional - Following are NOT default values, are only examples
 
