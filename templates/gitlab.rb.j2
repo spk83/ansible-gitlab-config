@@ -13,6 +13,8 @@ user['group'] = {{ gitlab_config_group | to_json }}
 ##! For more details on configuring external_url see:
 ##! https://docs.gitlab.com/omnibus/settings/configuration.html#configuring-the-external-url-for-gitlab
 external_url "{{ gitlab_config_external_url }}"
+##! SSL Configuration Options: https://docs.gitlab.com/omnibus/settings/ssl.html
+letsencrypt['enable'] = {{ gitlab_config_letsencrypt_enabled | to_json }}
 
 {% if proxy_env is defined -%}
 gitlab_rails['env'] = {
