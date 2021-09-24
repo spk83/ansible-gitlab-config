@@ -1,15 +1,18 @@
 ---
-
+# gitlab_ver: 13.10.2
 gitlab_config_dest: /etc/gitlab
+gitlab_config_privilege_escalate: True
+gitlab_config_privilege_escalation_user: root
 
 # Run gitlab-ctl reconfigure if config has changed
-gitlab_config_reconfigure: true
+gitlab_config_reconfigure: True
 
 # Take nightly backup of gitlab application and configuration
-gitlab_config_auto_nightly_backup: true
+gitlab_config_auto_backup_enabled: True
 
 # Required
 gitlab_config_external_url: http://example.com
+gitlab_config_letsencrypt_enabled: true
 
 # Optional - Following are NOT default values, are only examples
 
@@ -91,7 +94,36 @@ gitlab_config_external_url: http://example.com
 #     },
 #   ]
 
-# gitlab_config_manage_backup_path: true
+gitlab_config_manage_backup_path: False
+gitlab_config_backup_use_nfs: False
+
+gitlab_config_backup_restore_enabled: False
+gitlab_config_backup_restore_check_config: True
+gitlab_config_backup_restore_verify_db_secrets: False
+
+## Backup Environment Variables
+# gitlab_config_backup_restore_prompt_disable: True
+gitlab_config_backup_strategy: copy
+# gitlab_config_backup_timestamp_prefix: [TIMESTAMP]
+# gitlab_config_backup_gzip_rsyncable: true
+# gitlab_config_backup_group_duration: daily|weekly
+# gitlab_config_backup_exclude_directories:
+#   - db # (databases)
+#   - uploads # (attachments)
+#   - builds # (CI job output logs)
+#   - artifacts # (CI job artifacts)
+#   - lfs # (LFS objects)
+#   - registry # (Container Registry Images)
+#   - pages # (Pages Content)
+#   - repositories # (Git repositories data)
+#   - tar # (Tar Creation)
+# Note: v13.3+ https://docs.gitlab.com/ee/raketasks/backup_restore.html#back-up-git-repositories-concurrently
+# gitlab_config_backup_concurrency: 1
+# gitlab_config_backup_storage_concurrency: 1
+
+## Backup:Restore Environment Variables
+# gitlab_config_backup_restore_timestamp: [TIMESTAMP]-{{ gitlab_config_mode | default("omnibus") }}
+
 # gitlab_config_backup_path: /var/opt/gitlab/backups
 
 # gitlab_config_backup_archive_permissions: '0644'
@@ -110,6 +142,23 @@ gitlab_config_external_url: http://example.com
 #   aws_secret_access_key: secret123
 #   endPoint: https://s3.abc.com
 # gitlab_config_backup_upload_remote_directory: my.s3.gitlab-backups
+
+gitlab_config_backup_application_data: True
+gitlab_config_backup_application_data_schedule:
+  # month: '*'
+  # weekday: '*'
+  # day: '*'
+  # hour: '*'
+  # minute: '*'
+gitlab_config_backup_config_data: True
+gitlab_config_backup_config_data_schedule:
+  # month: '*'
+  # weekday: '*'
+  # day: '*'
+  # hour: '*'
+  # minute: '*'
+# gitlab_config_backup_config_data_path: /var/opt/gitlab/config-backups
+# gitlab_config_backup_config_data_addl_cmds: []
 
 # gitlab_config_smtp_enabled: true
 # gitlab_config_smtp_address: example.com
@@ -156,7 +205,7 @@ gitlab_config_external_url: http://example.com
 # gitlab_config_prometheus_gitlab_monitor_enabled: true
 
 # To enable HTTPS, change the gitlab_config_external_url to https://example.com
-# gitlab_config_enable_https: true
+gitlab_config_enable_https: False
 # gitlab_config_src_pki_dir: ~/pki
 # gitlab_config_dest_pki_dir: /etc/gitlab/ssl
 # gitlab_config_pki_key_suffix: '.key'
@@ -172,12 +221,6 @@ gitlab_config_external_url: http://example.com
 #       value: https://httpsproxy.com:8080
 #     - key: no_proxy
 #       value: localhost,127.0.0.1
-
-# Setting for auto nightly backups
-# gitlab_config_backup_application_data: true
-# gitlab_config_backup_config_data: true
-# gitlab_config_backup_config_data_path: /var/opt/gitlab/config-backups
-# gitlab_config_backup_config_data_additional_cmd: ''
 
 # For all other settings listed on - https://gitlab.com/gitlab-org/omnibus-gitlab/blob/master/files/gitlab-config-template/gitlab.rb.template ,
 # use following map to add custom settings

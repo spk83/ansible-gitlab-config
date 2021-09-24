@@ -1,11 +1,20 @@
 #jinja2: trim_blocks:False
 ## Latest options listed at https://gitlab.com/gitlab-org/omnibus-gitlab/blob/master/files/gitlab-config-template/gitlab.rb.template
 
+{% if gitlab_config_user is defined -%}
+user['username'] = {{ gitlab_config_user | to_json }}
+{%- endif %}
+{% if gitlab_config_group is defined -%}
+user['group'] = {{ gitlab_config_group | to_json }}
+{%- endif %}
+
 ## GitLab URL
 ##! URL on which GitLab will be reachable.
 ##! For more details on configuring external_url see:
 ##! https://docs.gitlab.com/omnibus/settings/configuration.html#configuring-the-external-url-for-gitlab
 external_url "{{ gitlab_config_external_url }}"
+##! SSL Configuration Options: https://docs.gitlab.com/omnibus/settings/ssl.html
+letsencrypt['enable'] = {{ gitlab_config_letsencrypt_enabled | to_json }}
 
 {% if proxy_env is defined -%}
 gitlab_rails['env'] = {

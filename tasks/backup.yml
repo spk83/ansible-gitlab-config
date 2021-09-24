@@ -1,38 +1,66 @@
 ---
+- name: create backup dir
+  become: '{{ gitlab_config_privilege_escalate }}'
+  become_user: '{{ gitlab_config_privilege_escalation_user }}'
+  when: gitlab_config_manage_backup_path or gitlab_config_backup_use_nfs
+  file:
+    path: '{{ gitlab_config_backup_dir }}'
+    state: directory
+    mode: 0755
+    owner: '{{ gitlab_config_eff_user }}'
+    group: '{{ gitlab_config_eff_group }}'
+
 - name: create cronjob to take nightly backup of application data
-  become: yes
-  become_user: root
-  when: gitlab_config_backup_application_data|default(true)
+  become: '{{ gitlab_config_privilege_escalate }}'
+  become_user: '{{ gitlab_config_privilege_escalation_user }}'
+  when: gitlab_config_backup_application_data
   cron:
-    name: "gitlab-ce-nightly-backups-app-data"
-    minute: "0"
-    hour: "2"
-    job: "/opt/gitlab/bin/gitlab-rake gitlab:backup:create"
+    name: "gitlab-app-data-backup"
+    job: |-
+      {{ gitlab_config_backup_program }} {{ gitlab_config_backup_command }}
+      {%- for env in (gitlab_config_backup_environment_vars | dict2items | rejectattr("value", "eq", "") | list) %} {{ env.key }}={{ env.value }}{% endfor -%}
+    month: '{{ gitlab_config_backup_application_data_schedule.month | default(omit) }}'
+    weekday: '{{ gitlab_config_backup_application_data_schedule.weekday | default(omit) }}'
+    day: '{{ gitlab_config_backup_application_data_schedule.day | default(omit) }}'
+    hour: '{{ gitlab_config_backup_application_data_schedule.hour | default(omit) }}'
+    minute: '{{ gitlab_config_backup_application_data_schedule.minute | default(omit) }}'
     state: present
 
 - name: create cronjob to take nightly backup of configuration data
-  become: yes
-  become_user: root
-  when: gitlab_config_backup_config_data|default(true)
+  become: '{{ gitlab_config_privilege_escalate }}'
+  become_user: '{{ gitlab_config_privilege_escalation_user }}'
+  when: gitlab_config_backup_config_data
   cron:
-    name: "gitlab-ce-nightly-backups-config-data"
-    minute: "0"
-    hour: "2"
-    job: 'umask 0077; FILE=$(date "+etc-gitlab-\%s.tgz"); tar cfz {{ gitlab_config_auto_nightly_backup_config_data_path }}/$FILE -C / etc/gitlab; {{ gitlab_config_backup_config_data_additional_cmd }}'
+    name: "gitlab-config-data-backup"
+    job: |-
+      {{ ((gitlab_ver is version("12.3", operator="<") | ternary(
+        [
+          "umask %s" | format(gitlab_config_auto_backup_config_data_permissions),
+          'FILE=$(date "+etc-gitlab-\%s.tgz")',
+          "tar cfz %s/$FILE -C / %s" | format(gitlab_config_auto_backup_config_data_path, gitlab_config_dest)
+        ],
+        [
+          "%s backup-etc %s" | format(gitlab_config_controller_cli, gitlab_config_auto_backup_config_data_path)
+        ])) + (gitlab_config_backup_config_data_addl_cmds | default([]))) | join(";") }}
+    month: '{{ gitlab_config_backup_config_data_schedule.month | default(omit) }}'
+    weekday: '{{ gitlab_config_backup_config_data_schedule.weekday | default(omit) }}'
+    day: '{{ gitlab_config_backup_config_data_schedule.day | default(omit) }}'
+    hour: '{{ gitlab_config_backup_config_data_schedule.hour | default(omit) }}'
+    minute: '{{ gitlab_config_backup_config_data_schedule.minute | default(omit) }}'
     state: present
 
 - name: update MAILTO entry of crontab to get output of nightly jobs
-  become: yes
-  become_user: root
+  become: '{{ gitlab_config_privilege_escalate }}'
+  become_user: '{{ gitlab_config_privilege_escalation_user }}'
   when: gitlab_config_cronjob_notification_email is defined
   cronvar:
     name: MAILTO
-    value: "{{ gitlab_config_cronjob_notification_email }}"
+    value: '{{ gitlab_config_cronjob_notification_email }}'
 
 - name: update MAILFROM entry of crontab
-  become: yes
-  become_user: root
+  become: '{{ gitlab_config_privilege_escalate }}'
+  become_user: '{{ gitlab_config_privilege_escalation_user }}'
   when: gitlab_config_cronjob_notification_email is defined and gitlab_config_email_from is defined
   cronvar:
     name: MAILFROM
-    value: "{{ gitlab_config_email_from }}"
+    value: '{{ gitlab_config_email_from }}'
